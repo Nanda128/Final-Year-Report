@@ -1,21 +1,30 @@
 #!/usr/bin/env python3
 r"""
-My Version Bump Script for GitHub Releases
+Generic Version Bump Script for GitHub Releases
 
 Rules:
 - If no existing tags, create v1.0.0
-- Compare latest tag to HEAD for changes in src/interim_report.tex
+- Compare latest tag to HEAD for changes in <report_dir>/<report_name>_report.tex
   - If any added lines contain "\section{", bump minor (X.Y+1.0)
   - Else if any added lines contain "\subsection{" or any other added lines, bump patch (X.Y.Z+1)
   - If no relevant changes to the file, print an empty string (no release)
 
 Outputs the new tag (e.g. v1.0.1) to stdout when a release is needed, or empty output when none.
+
+Usage: python3 version_bump.py <report_name>
+Example: python3 version_bump.py interim
+Example: python3 version_bump.py final
 """
 import subprocess
 import sys
 import re
 
-FILEPATH = 'interim/interim_report.tex'
+if len(sys.argv) < 2:
+    print("Usage: python3 version_bump.py <report_name>", file=sys.stderr)
+    sys.exit(1)
+
+REPORT_NAME = sys.argv[1]
+FILEPATH = f'{REPORT_NAME}/{REPORT_NAME}_report.tex'
 
 
 def run(cmd):
