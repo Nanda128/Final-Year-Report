@@ -43,7 +43,8 @@ try
                 Move-Item $f $auxilDir -Force
             }
         }
-        Get-ChildItem -Path $interimDir -Include "*.out","*.toc","*.bbl","*.blg" -File -ErrorAction SilentlyContinue | Remove-Item -Force
+        Get-ChildItem -Path $interimDir -Include "*.out","*.toc","*.bbl","*.blg","*.brf" -File -ErrorAction SilentlyContinue | Remove-Item -Force
+        Get-ChildItem -Path (Join-Path $interimDir 'sections') -Include "*.out","*.brf" -File -ErrorAction SilentlyContinue | Remove-Item -Force
 
         $pdfWordCount = $null
         $pdfPath = $outputPath

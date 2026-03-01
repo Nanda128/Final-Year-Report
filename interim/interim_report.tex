@@ -8,7 +8,7 @@
 \providecommand{\harvardurl}[1]{\url{#1}}
 \usepackage{etoolbox}
 \AtBeginEnvironment{thebibliography}{\sloppy}
-\usepackage{hyperref}
+\usepackage[hidelinks,breaklinks=true,backref=page]{hyperref}
 \newcommand{\BibTeX}{\textrm{B \kern -.05em \textsc{i \kern -.025em b} \kern -.08em T \kern -.1667em \lower .7ex \hbox{E} \kern -.125emX}}
 \begin{document}
 
@@ -17,7 +17,7 @@
     \IEEEauthorblockA{\textit{Department of Computer Science and Information Systems} \\
     \textit{University of Limerick}\\
     Limerick, Ireland \\
-    https://orcid.org/0009-0009-7390-5955}}
+    \url{https://orcid.org/0009-0009-7390-5955}}}
     \maketitle
 
     \input{./sections/abstract}
