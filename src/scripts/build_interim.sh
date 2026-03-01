@@ -10,7 +10,7 @@
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(dirname "$SCRIPT_DIR"/../..)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 INTERIM_DIR="$REPO_ROOT/interim"
 AUXIL_DIR="$REPO_ROOT/auxil"
 LOG_DIR="$REPO_ROOT/src/scripts/log"
