@@ -1,0 +1,63 @@
+% Introduction Section
+\section{Introduction}\label{sec:introduction}
+\subsection{Motivation}\label{subsec:motivation}
+Search and Rescue missions constitute time-critical humanitarian emergencies in which survival rates correlate directly with response times.
+\cite{doi:10.1580/06-WEME-OR-035R1.1} states that the probability of survival decreases significantly after the first 17 hours.
+
+Recent advances in autonomous Unmanned Aerial Vehicle (UAV) and Unmanned Surface Vessel (USV) technologies, combined with together with decentralised cooperative control and collective coordination methods, present an opportunity to transform MSAR\@.
+\cite{MESHCHERYAKOV201914} cites that Unmanned Vehicles in Swarms allows for greater coordination, and increased redundancy in the face of potential communication and maintenance issues that may arise at sea.
+However, managing Drone Swarms at scale remains difficult due to the limited amount of certified human operators, and concerns about human cognitive load.
+
+Digital Twins (DTs) are virtual replicas of physical systems that enable real-time monitoring, simulation and analysis.
+~\cite{HAAG201864} provides a Proof-of-Concept for a Digital Twin system.
+
+DTs offer a promising framework for swarm coordination.
+By maintaining a synchronized virtual representation of physical Unmanned Vehicle swarms, DTs could enable increased abstraction, easing cognitive loads on operators, in addition to potentially enabling predictive analysis, scenario-testing, and autonomous decision-making.
+
+Traditional SAR methods face substantial limitations, such as limited search coverage, difficulties in maintaining full readiness, high operational costs, extended response times, and coordination challenges in dynamic environments, as discussed in ~\cite{sar_challenges}.
+
+\subsection{Problem Statement}\label{subsec:problem-statement}
+Traditional MSAR operations suffer from several critical limitations.
+
+Human operators may experience increased cognitive overload during maritime deployments.
+In~\cite{riverine_MSAR_stress}, MSAR crew, in the context of riverine MSAR operations, tend to suffer marked increases in response time, and difficulties locating targets.
+The study found that MSAR crew reporting neither stress nor exertion located 78\% of deployed targets, while crew reporting both conditions located only 57\%.
+In addition, maintaining full readiness for larger, human-operated assets like vessels, helicopters and aircraft can be difficult if not economically impossible in some regions, leading to delays in response time due to poor maintenance, lack of fuel, etc.
+
+While drone solutions have been proposed and tested in real-life, like in ~\cite{multi-robot-team-MSAR}, many implementations do not use autonomous solutions.
+Instead, relying on a team of human operators to manage drones in a one-to-one fashion.
+When such solutions are scaled up, human operators can quickly reach cognitive overload, reducing response times.
+
+\subsection{Proposed Solution}\label{subsec:proposed-solution}
+This project proposes a Digital Twin Framework for Autonomous Drone Swarm Coordination with the intent of benefitting Maritime Search and Rescue operations.
+The framework seeks to integrate the Physical, Digital, and Service Layers of MSAR missions.
+
+It seeks to connect Autonomous Drones, usually equipped with sensors, life-saving equipment, GPS, and other communications modules, in a Physical Layer.
+These drones should be able to individually avoid obstacles, and generate their own paths when ground station connection is unavailable.
+
+In the swarm coordination layer, the swarm inputs the orders given from the user and calculates optimal search coverage paths.
+
+The swarm, and individual drones, are then represented through high-fidelity virtual replicas incorporating real-time state synchronization, which would become the framework's Digital Layer.
+
+Finally, the interface layer allows human-swarm communication, where the human inputs mission parameters and objectives, and supervises the drone swarm.
+The operator should also be able to intervene and direct individual drones at any time.
+
+In this manner, the framework intends to enable autonomous or semi-autonomous coordination of unmanned assets while maintaining global objectives, hence reducing dependency on centralised control, and improving the fault tolerance behind the systems that make up MSAR operations.
+
+\subsection{Research Objectives}\label{subsec:research-objectives}
+This project aims to achieve the following objectives:
+\begin{enumerate}
+    \item Develop a comprehensive Digital Twin Framework integrating UAV swarm simulation with real-time coordination algorithms.
+    \item Evaluate the practicality of implementing Distributed Consensus-Based Coordination protocols for error handling, and generating search patterns.
+    \item Design adaptive mechanisms that automatically assign tasks depending on environmental conditions and mission objectives.
+    \item Demonstrate improvement in helping reduce cognitive overload for human operators compared to traditional methods.
+\end{enumerate}
+
+\subsection{Report Organization}\label{subsec:report-organization}
+The remainder of this report is to be structured as follows:
+\begin{itemize}
+    \item Section II - Background Research and Literature Review surrounding Digital Twins, UAV Swarms, and MSAR
+    \item Section III - Methodology
+    \item Section IV - Project Timeline and Constraints
+    \item Section V - Conclusion
+\end{itemize}

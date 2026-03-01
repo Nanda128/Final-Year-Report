@@ -10,64 +10,54 @@
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-cd "$PROJECT_ROOT" || exit 1
-
-LOG_DIR="$PROJECT_ROOT/scripts/log"
+REPO_ROOT="$(dirname "$SCRIPT_DIR"/../..)"
+INTERIM_DIR="$REPO_ROOT/interim"
+AUXIL_DIR="$REPO_ROOT/auxil"
+LOG_DIR="$REPO_ROOT/src/scripts/log"
 mkdir -p "$LOG_DIR"
-
-PARENT_DIR="$(dirname "$PROJECT_ROOT")"
-AUXIL_DIR="$PARENT_DIR/auxil"
 mkdir -p "$AUXIL_DIR"
 
-BIB_SOURCE="$PROJECT_ROOT/interim_report.bib"
-BIB_DEST="$PARENT_DIR/interim_report.bib"
-if [ -f "$BIB_SOURCE" ]; then
-  cp -f "$BIB_SOURCE" "$BIB_DEST"
+MAIN_TEX_FILE="interim_report.tex"
+TEX_SRC="$INTERIM_DIR/$MAIN_TEX_FILE"
+BIB_SRC="$INTERIM_DIR/interim_report.bib"
+BIB_DEST="$REPO_ROOT/interim_report.bib"
+OUTPUT_PATH="$REPO_ROOT/Interim_FYP-DT-MSAR_23070854.pdf"
+
+# Always work in repo root
+cd "$REPO_ROOT" || exit 1
+# Copy .tex and .bib from interim to repo root
+cp -f "$TEX_SRC" "$MAIN_TEX_FILE"
+if [ -f "$BIB_SRC" ]; then
+  cp -f "$BIB_SRC" "$BIB_DEST"
 fi
-
-OUTPUT_PATH="$PARENT_DIR/Interim_FYP-DT-MSAR_23070854.pdf"
-
-pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$PARENT_DIR" interim_report.tex 2>&1 | tee "$LOG_DIR/pdflatex-pass1.scripts.log"
-
-ORIGINAL_DIR=$(pwd)
-cd "$PARENT_DIR" || exit 1
-if [ -f interim_report.aux ]; then
+# Copy interim/sections/ to repo root/sections
+SECTIONS_SRC="$INTERIM_DIR/sections"
+SECTIONS_DEST="$REPO_ROOT/sections"
+if [ -d "$SECTIONS_SRC" ]; then
+  rm -rf "$SECTIONS_DEST"
+  cp -r "$SECTIONS_SRC" "$SECTIONS_DEST"
+fi
+# First pdflatex pass
+pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass1.scripts.log"
+# Bibtex if .aux exists
+if [ -f "interim_report.aux" ]; then
   bibtex interim_report 2>&1 | tee "$LOG_DIR/bibtex.scripts.log"
-
-  if [ -f "$BIB_DEST" ]; then
-    rm -f "$BIB_DEST"
-  fi
 fi
-cd "$ORIGINAL_DIR" || exit 1
-
-pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$PARENT_DIR" interim_report.tex 2>&1 | tee "$LOG_DIR/pdflatex-pass2.scripts.log"
-pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$PARENT_DIR" interim_report.tex 2>&1 | tee "$LOG_DIR/pdflatex-pass3.scripts.log"
-
-TEMP_PDF_PATH="$PARENT_DIR/interim_report.pdf"
+# Second and third pdflatex passes
+pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass2.scripts.log"
+pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass3.scripts.log"
+# Move PDF and aux files
+TEMP_PDF_PATH="$REPO_ROOT/interim_report.pdf"
 if [ -f "$TEMP_PDF_PATH" ]; then
   mv "$TEMP_PDF_PATH" "$OUTPUT_PATH"
-
-  if [ -f "$PARENT_DIR/interim_report.aux" ]; then
-    mv "$PARENT_DIR/interim_report.aux" "$AUXIL_DIR/"
-  fi
-  if [ -f "$PARENT_DIR/interim_report.log" ]; then
-    mv "$PARENT_DIR/interim_report.log" "$AUXIL_DIR/"
-  fi
-  if [ -f "$PARENT_DIR/interim_report.bbl" ]; then
-    mv "$PARENT_DIR/interim_report.bbl" "$AUXIL_DIR/"
-  fi
-  if [ -f "$PARENT_DIR/interim_report.blg" ]; then
-    mv "$PARENT_DIR/interim_report.blg" "$AUXIL_DIR/"
-  fi
-
-  shopt -s nullglob
-  for f in *.out *.toc *.bbl *.blg; do
+  for ext in aux log bbl blg; do
+    f="$REPO_ROOT/interim_report.$ext"
     if [ -f "$f" ]; then
-      rm -f "$f"
+      mv "$f" "$AUXIL_DIR/"
     fi
   done
-
+  find "$REPO_ROOT" -maxdepth 1 -type f \( -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec rm -f {} +
+  # Word count logic unchanged
   PDF_WORDCOUNT=""
   if command -v pdftotext >/dev/null 2>&1; then
     RAW=$(pdftotext -layout -enc UTF-8 "$OUTPUT_PATH" - 2>/dev/null || true)
@@ -98,11 +88,6 @@ if [ -f "$TEMP_PDF_PATH" ]; then
 
   printf "Done. Output: %s. Log files cleaned up. Build logs: %s\n" "$OUTPUT_PATH" "$LOG_DIR"
 else
-  shopt -s nullglob
-  for f in *.aux *.log *.out *.toc *.bbl *.blg; do
-    if [ -f "$f" ]; then
-      mv -f "$f" "$LOG_DIR/"
-    fi
-  done
-  printf "PDF compilation failed. Logs: %s\n" "$LOG_DIR"
+  find "$REPO_ROOT" -maxdepth 1 -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec mv -f {} "$LOG_DIR/" \;
+  echo "PDF compilation failed. Logs: $LOG_DIR"
 fi
