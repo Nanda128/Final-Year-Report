@@ -15,7 +15,7 @@ import subprocess
 import sys
 import re
 
-FILEPATH = 'interim/interim_report.tex'
+FILEPATH = 'src/interim_report.tex'
 
 
 def run(cmd):
