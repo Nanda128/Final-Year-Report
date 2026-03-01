@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 My Version Bump Script for GitHub Releases
 
 Rules:
@@ -23,7 +23,7 @@ def run(cmd):
 
 
 try:
-    latest_tag = run("git describe --tags --abbrev=0")
+    latest_tag = str(run("git describe --tags --abbrev=0"))
 except subprocess.CalledProcessError:
     latest_tag = ''
 
@@ -31,7 +31,7 @@ if not latest_tag:
     print('v1.0.0')
     sys.exit(0)
 
-m = re.match(r"v?(\d+)\.(\d+)\.(\d+)", latest_tag)
+m = re.match(r"v?(\d+)\.(\d+)\.(\d+)", str(latest_tag))
 if not m:
     base_major, base_minor, base_patch = 1, 0, 0
 else:
@@ -39,7 +39,7 @@ else:
 
 diff = None
 try:
-    diff = run(f"git diff --unified=0 {latest_tag} HEAD -- {FILEPATH}")
+    diff = str(run(f"git diff --unified=0 {latest_tag} HEAD -- {FILEPATH}"))
 except subprocess.CalledProcessError:
     print('')
     sys.exit(0)
@@ -48,14 +48,14 @@ if not diff:
     print('')
     sys.exit(0)
 
-added_lines = [l for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++')]
+added_lines = [str(l[1:]) for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++')]
 
 if not added_lines:
     print('')
     sys.exit(0)
 
-section_added = any(re.search(r"\\section\s*\{", l) for l in added_lines)
-subsection_added = any(re.search(r"\\subsection\s*\{", l) for l in added_lines)
+section_added = any(re.search(r"\\section\s*\{", str(l)) for l in added_lines)
+subsection_added = any(re.search(r"\\subsection\s*\{", str(l)) for l in added_lines)
 
 if section_added:
     new_tag = f"v{base_major}.{base_minor + 1}.0"
