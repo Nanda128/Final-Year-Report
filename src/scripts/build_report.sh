@@ -26,31 +26,25 @@ mkdir -p "$AUXIL_DIR"
 
 MAIN_TEX_FILE="${REPORT_NAME}_report.tex"
 TEX_SRC="$REPORT_DIR/$MAIN_TEX_FILE"
-BIB_SRC="$REPORT_DIR/${REPORT_NAME}_report.bib"
-BIB_DEST="$REPO_ROOT/${REPORT_NAME}_report.bib"
-OUTPUT_PATH="$REPO_ROOT/FYP_${REPORT_NAME:0:1}^U_23070854.pdf"
 
-# Set output path based on report name
+OUTPUT_PATH="$REPO_ROOT/${REPORT_NAME}_report.pdf"
+
 if [ "$REPORT_NAME" = "interim" ]; then
     OUTPUT_PATH="$REPO_ROOT/Interim_FYP-DT-MSAR_23070854.pdf"
 elif [ "$REPORT_NAME" = "final" ]; then
     OUTPUT_PATH="$REPO_ROOT/Final_FYP-DT-MSAR_23070854.pdf"
 fi
 
-cd "$REPO_ROOT" || exit 1
-
-# Copy .tex and .bib from report directory to repo root
-cp -f "$TEX_SRC" "$MAIN_TEX_FILE"
-if [ -f "$BIB_SRC" ]; then
-  cp -f "$BIB_SRC" "$BIB_DEST"
+if [ ! -d "$REPORT_DIR" ]; then
+  echo "Report directory not found: $REPORT_DIR" >&2
+  exit 1
+fi
+if [ ! -f "$TEX_SRC" ]; then
+  echo "Main TeX file not found: $TEX_SRC" >&2
+  exit 1
 fi
 
-SECTIONS_SRC="$REPORT_DIR/sections"
-SECTIONS_DEST="$REPO_ROOT/sections"
-if [ -d "$SECTIONS_SRC" ]; then
-  rm -rf "$SECTIONS_DEST"
-  cp -r "$SECTIONS_SRC" "$SECTIONS_DEST"
-fi
+cd "$REPORT_DIR" || exit 1
 
 pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass1.scripts.log"
 
@@ -61,16 +55,20 @@ fi
 pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass2.scripts.log"
 pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass3.scripts.log"
 
-TEMP_PDF_PATH="$REPO_ROOT/${REPORT_NAME}_report.pdf"
+TEMP_PDF_PATH="$REPORT_DIR/${REPORT_NAME}_report.pdf"
 if [ -f "$TEMP_PDF_PATH" ]; then
   mv "$TEMP_PDF_PATH" "$OUTPUT_PATH"
   for ext in aux log bbl blg; do
-    f="$REPO_ROOT/${REPORT_NAME}_report.$ext"
+    f="$REPORT_DIR/${REPORT_NAME}_report.$ext"
     if [ -f "$f" ]; then
-      mv "$f" "$AUXIL_DIR/"
+      mv "$f" "$LOG_DIR/"
     fi
   done
-  find "$REPO_ROOT" -maxdepth 1 -type f \( -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec rm -f {} +
+  find "$REPORT_DIR" -maxdepth 1 -type f \( -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" -o -name "*.brf" \) -exec rm -f {} +
+
+  if [ -d "$REPORT_DIR/sections" ]; then
+    find "$REPORT_DIR/sections" -type f \( -name "*.out" -o -name "*.brf" \) -exec rm -f {} +
+  fi
 
   PDF_WORDCOUNT=""
   if command -v pdftotext >/dev/null 2>&1; then
@@ -102,7 +100,7 @@ if [ -f "$TEMP_PDF_PATH" ]; then
 
   printf "Done. Output: %s. Log files cleaned up. Build logs: %s\n" "$OUTPUT_PATH" "$LOG_DIR"
 else
-  find "$REPO_ROOT" -maxdepth 1 -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec mv -f {} "$LOG_DIR/" \;
+  find "$REPORT_DIR" -maxdepth 1 -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec mv -f {} "$LOG_DIR/" \;
   echo "PDF compilation failed. Logs: $LOG_DIR"
 fi
 
