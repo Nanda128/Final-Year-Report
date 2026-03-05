@@ -46,28 +46,33 @@ fi
 
 cd "$REPORT_DIR" || exit 1
 
-pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass1.scripts.log"
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$AUXIL_DIR" "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass1.scripts.log"
 
-if [ -f "${REPORT_NAME}_report.aux" ]; then
-  bibtex "${REPORT_NAME}_report" 2>&1 | tee "$LOG_DIR/bibtex.scripts.log"
+if [ -f "$AUXIL_DIR/${REPORT_NAME}_report.aux" ]; then
+  (cd "$AUXIL_DIR" && bibtex "${REPORT_NAME}_report") 2>&1 | tee "$LOG_DIR/bibtex.scripts.log"
 fi
 
-pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass2.scripts.log"
-pdflatex -interaction=nonstopmode -halt-on-error "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass3.scripts.log"
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$AUXIL_DIR" "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass2.scripts.log"
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$AUXIL_DIR" "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass3.scripts.log"
 
-TEMP_PDF_PATH="$REPORT_DIR/${REPORT_NAME}_report.pdf"
+TEMP_PDF_PATH="$AUXIL_DIR/${REPORT_NAME}_report.pdf"
 if [ -f "$TEMP_PDF_PATH" ]; then
   mv "$TEMP_PDF_PATH" "$OUTPUT_PATH"
   for ext in aux log bbl blg; do
-    f="$REPORT_DIR/${REPORT_NAME}_report.$ext"
+    f="$AUXIL_DIR/${REPORT_NAME}_report.$ext"
     if [ -f "$f" ]; then
       mv "$f" "$LOG_DIR/"
     fi
   done
+
   find "$REPORT_DIR" -maxdepth 1 -type f \( -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" -o -name "*.brf" \) -exec rm -f {} +
 
   if [ -d "$REPORT_DIR/sections" ]; then
     find "$REPORT_DIR/sections" -type f \( -name "*.out" -o -name "*.brf" \) -exec rm -f {} +
+  fi
+
+  if [ -d "$AUXIL_DIR" ]; then
+    find "$AUXIL_DIR" -maxdepth 1 -type f \( -name "*.out" -o -name "*.toc" -o -name "*.brf" \) -exec rm -f {} +
   fi
 
   PDF_WORDCOUNT=""
@@ -100,7 +105,12 @@ if [ -f "$TEMP_PDF_PATH" ]; then
 
   printf "Done. Output: %s. Log files cleaned up. Build logs: %s\n" "$OUTPUT_PATH" "$LOG_DIR"
 else
-  find "$REPORT_DIR" -maxdepth 1 -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec mv -f {} "$LOG_DIR/" \;
+  # Move any aux/log files produced into the centralized log directory for inspection
+  if [ -d "$AUXIL_DIR" ]; then
+    find "$AUXIL_DIR" -maxdepth 1 -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec mv -f {} "$LOG_DIR/" \;
+  else
+    find "$REPORT_DIR" -maxdepth 1 -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec mv -f {} "$LOG_DIR/" \;
+  fi
   echo "PDF compilation failed. Logs: $LOG_DIR"
 fi
 

@@ -46,30 +46,38 @@ if (-not (Test-Path (Join-Path $reportDir $MainTexFile)))
 Push-Location $reportDir
 try
 {
-    pdflatex -interaction=nonstopmode -halt-on-error "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass1.scripts.log')
+    pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$auxilDir" "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass1.scripts.log')
 
-    if (Test-Path "${ReportName}_report.aux")
+    if (Test-Path (Join-Path $auxilDir "${ReportName}_report.aux"))
     {
+        Push-Location $auxilDir
         bibtex "${ReportName}_report" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'bibtex.scripts.log')
+        Pop-Location
     }
 
-    pdflatex -interaction=nonstopmode -halt-on-error "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass2.scripts.log')
-    pdflatex -interaction=nonstopmode -halt-on-error "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass3.scripts.log')
+    pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$auxilDir" "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass2.scripts.log')
+    pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$auxilDir" "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass3.scripts.log')
 
-    $tempPdfPath = Join-Path $reportDir "${ReportName}_report.pdf"
+    $tempPdfPath = Join-Path $auxilDir "${ReportName}_report.pdf"
     if (Test-Path $tempPdfPath)
     {
         Move-Item $tempPdfPath $outputPath -Force
         foreach ($ext in @('aux', 'log', 'bbl', 'blg'))
         {
-            $f = Join-Path $reportDir "${ReportName}_report.$ext"
+            $f = Join-Path $auxilDir "${ReportName}_report.$ext"
             if (Test-Path $f)
             {
                 Move-Item $f $logDir -Force
             }
         }
 
+        # Remove temporary output files that may have been generated in the report directory or auxil directory
         Get-ChildItem -Path $reportDir -Include "*.out","*.toc","*.bbl","*.blg","*.brf" -File -ErrorAction SilentlyContinue | Remove-Item -Force
+        if (Test-Path $auxilDir)
+        {
+            Get-ChildItem -Path $auxilDir -Include "*.out","*.toc","*.brf" -File -ErrorAction SilentlyContinue | Remove-Item -Force
+        }
+
         $sectionsDir = Join-Path $reportDir 'sections'
         if (Test-Path $sectionsDir)
         {
@@ -113,7 +121,15 @@ try
     }
     else
     {
-        Get-ChildItem -Path $reportDir -Include "*.aux","*.log","*.out","*.toc","*.bbl","*.blg" -File -ErrorAction SilentlyContinue | Move-Item -Destination $logDir -Force
+        # Move any aux/log files produced into the centralized log directory for inspection
+        if (Test-Path $auxilDir)
+        {
+            Get-ChildItem -Path $auxilDir -Include "*.aux","*.log","*.out","*.toc","*.bbl","*.blg" -File -ErrorAction SilentlyContinue | Move-Item -Destination $logDir -Force
+        }
+        else
+        {
+            Get-ChildItem -Path $reportDir -Include "*.aux","*.log","*.out","*.toc","*.bbl","*.blg" -File -ErrorAction SilentlyContinue | Move-Item -Destination $logDir -Force
+        }
         Write-Output "PDF compilation failed. Logs: $( Resolve-Path $logDir )"
     }
 }
