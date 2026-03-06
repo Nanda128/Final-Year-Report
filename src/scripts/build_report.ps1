@@ -71,7 +71,6 @@ try
             }
         }
 
-        # Remove temporary output files that may have been generated in the report directory or auxil directory
         Get-ChildItem -Path $reportDir -Include "*.out","*.toc","*.bbl","*.blg","*.brf" -File -ErrorAction SilentlyContinue | Remove-Item -Force
         if (Test-Path $auxilDir)
         {
@@ -121,7 +120,6 @@ try
     }
     else
     {
-        # Move any aux/log files produced into the centralized log directory for inspection
         if (Test-Path $auxilDir)
         {
             Get-ChildItem -Path $auxilDir -Include "*.aux","*.log","*.out","*.toc","*.bbl","*.blg" -File -ErrorAction SilentlyContinue | Move-Item -Destination $logDir -Force

@@ -105,7 +105,6 @@ if [ -f "$TEMP_PDF_PATH" ]; then
 
   printf "Done. Output: %s. Log files cleaned up. Build logs: %s\n" "$OUTPUT_PATH" "$LOG_DIR"
 else
-  # Move any aux/log files produced into the centralized log directory for inspection
   if [ -d "$AUXIL_DIR" ]; then
     find "$AUXIL_DIR" -maxdepth 1 -type f \( -name "*.aux" -o -name "*.log" -o -name "*.out" -o -name "*.toc" -o -name "*.bbl" -o -name "*.blg" \) -exec mv -f {} "$LOG_DIR/" \;
   else

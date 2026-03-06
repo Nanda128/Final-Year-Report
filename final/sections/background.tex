@@ -22,10 +22,40 @@ This method allowed us to ensure that drones are assigned to search areas that a
 We further optimized the cell generation by ensuring that faster drones cover proportionally larger cells, to ensure that all drones finish their tasks at approximately the same time.
 This design choice was made to minimize the risk of drones being idle, maximizing their operational efficiency.
 
-Within these cells, we implemented a Boustrophedon or Lawnmower pattern, introduced by ~\cite{10.1007/978-1-4471-1273-0_32}, which is a search pattern used to draw a set of waypoints to optimally cover a space.
-This was chosen for its simplicity and efficiency in covering large areas, backed up by existing research on the use of such patterns by UAVs (~\cite{bahnemann2021revisiting}).
+Within these cells, we implemented a Boustrophedon or Lawnmower pattern, introduced by~\cite{10.1007/978-1-4471-1273-0_32}, which is a search pattern used to draw a set of waypoints to optimally cover a space.
+This was chosen for its simplicity and efficiency in covering large areas, backed up by existing research on the use of such patterns by UAVs (\cite{bahnemann2021revisiting}).
+
+The choice to use a more ``classic'' approach to search pattern generation, since we're operating with the expectation that SAR operations must understand and, when necessary, override the search pattern decisions rather than treat them as opaque.
+This sets BEACON closer to industrial coverage-planning systems than frontier swarm-RL approaches, which are more efficient, and arguably better aligned with safety-critical MSAR needs.
 
 \subsection{Human Factors in Supervising Autonomous Systems}\label{subsec:human-factors-in-supervising-autonomous-systems}
 
-The core challenge in supervising multiple autonomous systems will always be managing human cognitive load while still preserving situational awareness.
-\cite{situation_awareness}\('\)s work on Situation Awareness in the context of flight systems, revealed that passively monitoring highly automated systems can increase mental workload rather than decrease it.
+In high-automation environments, the design of the human-machine interface has been shown to be as critical as the underlying autonomy, as automation without a sufficiently designed interface can lead to increased cognitive load, reduced situational awareness, and ultimately, decreased performance.
+\cite{ergonomicautomationeffect} discusses the effects of automation on human performance in the context of UAV routing, and~\cite{CUMMINGS2007339} provides a different version of this exact test in the context of one-to-many human operator-to-UAV supervision, which is more relevant to this project.
+Both papers found that while automation could reduce workload, high automation could lead to complacency, reduced situational awareness, and increased difficulty when performing debugging.
+This phenomenon is known as ``Automation Bias''.
+
+\cite{RN1} proposes a framework for a timeline-based decision-support visualization tool (``StarVis'') for multi-UAV missions and found that a local visualization focused on individual UAVs yielded better performance, higher Situational Awareness, and reduced workload due to verification.
+The global visualization, which provided data across the entire swarm, led to worse outcomes, despite showing the user exactly how individual breakages affected the larger schedule.
+This result suggests that HCI design must carefully balance information richness with the limits of human attention.
+
+Ecological Interface Design (EID) offers a different approach, advocating for deeply-detailed displays that reveal the underlying structure of a work domain, so that operators can diagnose and respond to unforeseen events.
+In supervisory ATC tasks, Ecological interfaces demonstrate better fault diagnosis of automated advice and improved transparency.
+However, studies like~\cite{10.1007/s10111-017-0438-y} also highlight the need for careful design to prevent information overload, and that the benefits of EID may be most beneficial for highly-trained operators and when the domain's constraints are generally stable.
+
+BEACON's interface design seeks to draw from these findings selectively.
+The central mission map and the coverage visualization act as a configural display of spatial constraints, such as the mission boundary, individual voronoi cells, and each drone's assigned sweep paths.
+This echo's EID's emphasis on revealing the underlying structure of the work domain.
+
+At the same time, BEACON avoids a deliberately avoids an overly-dense global abstraction of all drones and tasks into one widget, instead providing localised drone and anomaly patterns, in addition to actionable alerts.
+This implementation goes in-line with earlier findings that asset-focused visualizations increase performance, and therefore reduce workload.
+
+\subsection{Workload Measurement and HCI Evaluation}\label{subsec:workload-measurement-and-hci-evaluation}
+
+NASA-TLX is a widely used tool for measuring subjective workload in a quantitative manner.
+Introduced in~\cite{HART1988139}, it assesses six dimensions of workload: Mental, Physical, and Temporal Demand, Performance, Effort, and Frustration.
+Each dimension is rated on a scale from 0 to 100, and then is weighted based on pairwise comparisons made by the subject to determine each factor's relative importance to the workload.
+The final workload score is calculated as a weighted average of the six dimensions, providing a comprehensive measure of the operator's perceived workload.
+
+However, while NASA-TLX is a powerful tool for assessing subjective workload, it is important to complement it with objective performance metrics like intervention frequency, and response times to get a thorough understanding of the operator's experience.
+Purely relying on subjective measures, even when transformed into scores, can miss important nuances in how different operators interact with the system.
