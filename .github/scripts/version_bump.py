@@ -7,7 +7,7 @@ Rules:
 - Compare latest tag to HEAD for changes in <report_dir>/<report_name>_report.tex
   - If any added lines contain "\section{", bump minor (X.Y+1.0)
   - Else if any added lines contain "\subsection{" or any other added lines, bump patch (X.Y.Z+1)
-  - If no relevant changes to the file, print an empty string (no release)
+  - If no relevant changes to the file(s), print an empty string (no release)
 
 Outputs the new tag (e.g. interim-v1.0.1) to stdout when a release is needed, or empty output when none.
 
@@ -24,7 +24,7 @@ if len(sys.argv) < 2:
     sys.exit(1)
 
 REPORT_NAME = sys.argv[1]
-FILEPATH = f'{REPORT_NAME}/{REPORT_NAME}_report.tex'
+FILEPATH = f'{REPORT_NAME}'
 
 
 def run(cmd):
