@@ -50,8 +50,8 @@ try
 
     if (Test-Path (Join-Path $auxilDir "${ReportName}_report.aux"))
     {
-        Push-Location $reportDir
-        bibtex "../auxil/${ReportName}_report" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'bibtex.scripts.log')
+        Push-Location $auxilDir
+        bibtex "${ReportName}_report" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'bibtex.scripts.log')
         Pop-Location
     }
 
