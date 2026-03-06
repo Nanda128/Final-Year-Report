@@ -49,7 +49,7 @@ cd "$REPORT_DIR" || exit 1
 pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$AUXIL_DIR" "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass1.scripts.log"
 
 if [ -f "$AUXIL_DIR/${REPORT_NAME}_report.aux" ]; then
-  (cd "$AUXIL_DIR" && bibtex "${REPORT_NAME}_report") 2>&1 | tee "$LOG_DIR/bibtex.scripts.log"
+  (cd "$REPORT_DIR" && bibtex "../auxil/${REPORT_NAME}_report") 2>&1 | tee "$LOG_DIR/bibtex.scripts.log"
 fi
 
 pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$AUXIL_DIR" "$MAIN_TEX_FILE" 2>&1 | tee "$LOG_DIR/pdflatex-pass2.scripts.log"

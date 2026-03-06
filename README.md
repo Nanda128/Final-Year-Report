@@ -38,8 +38,7 @@ After installing a LaTeX distribution, you can use an editor like TeXstudio or O
 files in this repository.
 I used IntelliJ IDEA with the TeXiFy plugin for writing and compiling my LaTeX documents.
 
-To compile the main document, navigate to ``src/scripts`` and run either ``build_latex.ps1`` or ``build_latex.sh``
-depending on your operating system.
+To compile the main document, navigate to ``src/scripts`` and run ``build_report.ps1`` or ``build_report.sh`` with either ``final`` keyword or ``interim`` keyword depending on your operating system.
 
 (Run PowerShell (.ps1) script on Windows, or Bash (.sh) script on Linux/macOS)
 
