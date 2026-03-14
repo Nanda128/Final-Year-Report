@@ -1,61 +1,85 @@
 \section{Background}\label{sec:background}
 
-\subsection{Unmanned Vehicles in Search and Rescue Operations}\label{subsec:uav-applications-in-search-and-rescue-operations}
+\subsection{Unmanned Vehicles in Search and Rescue}\label{subsec:unmanned-vehicles-in-search-and-rescue}
 
-Papers like~\cite{MARTINEZALPISTE2021114937} show that Unmanned Vehicles have been proven to be effective in Terrestrial Search and Rescue operations, compared to random searching.
-Extending these ideas to Maritime environments, combining UAVs and USVs have the potential to enhance MSAR operations by providing a faster response time, increased search coverage, and reduced risk to human rescuers.
-However, maritime environments present unique challenges, requiring any practical implementation to optimize coverage, communication usage, and operator workload.
+Unmanned vehicles have long been used as force multipliers in SAR situations.
+\cite{waharte2010supporting} shows that autonomous use of UAVs could significantly enhance terrestrial SAR through structured search strategies, reducing expected detection times compared to random search.
+In the maritime domain, recent SAR frameworks (\cite{messmer2024uavassistedmaritimesearchrescue}) for UAV-assisted MSAR have proposed software architectures that combine onboard UAV detection with more advanced ground-station processing.
 
-Drone swarms offer additional advantages by enabling parallel searching, in addition to redundancy in case of failure at either the drone level or in communications.
-However, they also create entirely new coordination challenges, such as collision avoidance, and excessive overlap.
-There's also the risk of human operators abstracting the swarm away as a single entity rather than a swarm of multiple smaller entities.
-BEACON seeks to build on this line of research by adopting swarm-style coverage planning in a simulation primarily focused on human supervision rather than low-level control.
+\cite{7761074} demonstrated a co-operative multi-robot team for surveilling shipwreck survivors at sea, in collaboration with the Portuguese Navy, at an undeclared location.
+While the paper offered promising results for the application of UAVs/USVs in Maritime Search and Rescue, many such deployments retain strong human involvement at the control level.
+In the case of this paper, a UAV takes off from the USV, ascends to a given height, and then pings a USV with the location of anything it suspects to be a person at sea.
+The USV then moves to the target, and takes a picture of it, which is then sent with the target's location to a human operator for verification.
 
-\subsection{Division of Labour}\label{subsec:division-of-labour}
+While this system is effective, it relies on a human operator, or a team of operators, to manage the drones in small groups.
+This can be due to regulatory constraints, safety concerns, and incomplete foundations for trust in onboard autonomy.
 
-Deciding on the optimal search patten for a swarm of drones is a heavily involved process, requiring several parameters to be taken into account, such as the number of drones, the size of the search area, and the expected number of targets.
-The challenge of deciding optimal search patterns creates a form of Traveling Salesman Problem, a well-known NP-hard problem in computation optimization.
+This reliance on manual control helps to explain why many implementations of UAVs in MSAR do not use entirely autonomous solutions.
+Factors like safety, certification, and legal accountability inherently favour conservative, operator-centric control approaches.
+Consequently, there is little empirical evidence on how far autonomy and human-swarm interfaces can be pushed while maintaining acceptable workload and safety during a Maritime Search and Rescue operation.
 
-The approach we chose to implement in BEACON is based on Voronoi Tessellations, which offer an adaptive way to divide search area among drones, depending on their location.
-This method allowed us to ensure that drones are assigned to search areas that are closest to them, minimizing travel time and maximizing coverage efficiency.
+\subsection{Swarm Coordination}\label{subsec:swarm-coordination}
 
-We further optimized the cell generation by ensuring that faster drones cover proportionally larger cells, to ensure that all drones finish their tasks at approximately the same time.
-This design choice was made to minimize the risk of drones being idle, maximizing their operational efficiency.
+Multi-agent swarm coordination is a well-studied topic which aims to achieve a robust method of coordinating multiple agents without single points of failure.
+\cite{ENMASCA2025} introduced ``EN-MASCA'' (Enhanced Multi-Agent Swarm Control Algorithm) for drone swarm patrolling in durian orchards.
+It employs reinforcement learning approaches to optimise formations and avoid obstacles in terrestrial agricultural settings.
 
-Within these cells, we implemented a Boustrophedon or Lawnmower pattern, introduced by~\cite{10.1007/978-1-4471-1273-0_32}, which is a search pattern used to draw a set of waypoints to optimally cover a space.
-This was chosen for its simplicity and efficiency in covering large areas, backed up by existing research on the use of such patterns by UAVs (\cite{bahnemann2021revisiting}).
+While not related to the maritime domain, EN-MASCA shows that learned coordination can be deployed practically.
+However, this comes with the drawback of requiring substantial training data, and computation resources.
+Both of these issues can be prohibitive for SAR platforms.
 
-The choice to use a more ``classic'' approach to search pattern generation, since we're operating with the expectation that SAR operations must understand and, when necessary, override the search pattern decisions rather than treat them as opaque.
-This sets BEACON closer to industrial coverage-planning systems than frontier swarm-RL approaches, which are more efficient, and arguably better aligned with safety-critical MSAR needs.
+Consensus-based approaches, like the one proposed by~\cite{dev2025swarnraft}, offer a more lightweight alternative to reinforcement learning.
+A consensus-based approach tackles robustness to communication issues by allowing multiple drones to converge on a common estimate of the swarm state rather than rely on excessive ground-station communication.
 
-\subsection{Human Factors in Supervising Autonomous Systems}\label{subsec:human-factors-in-supervising-autonomous-systems}
+Across these approaches, the most primary motivators appear to be collision avoidance and maximizing search coverage.
+Operators over open ocean may not need to worry about terrain, but care must be given to avoid obstacles like ships, waves, and other drones.
 
-In high-automation environments, the design of the human-machine interface has been shown to be as critical as the underlying autonomy, as automation without a sufficiently designed interface can lead to increased cognitive load, reduced situational awareness, and ultimately, decreased performance.
-\cite{ergonomicautomationeffect} discusses the effects of automation on human performance in the context of UAV routing, and~\cite{CUMMINGS2007339} provides a different version of this exact test in the context of one-to-many human operator-to-UAV supervision, which is more relevant to this project.
-Both papers found that while automation could reduce workload, high automation could lead to complacency, reduced situational awareness, and increased difficulty when performing debugging.
-This phenomenon is known as ``Automation Bias''.
+BEACON has opted for a geometric, explainable method.
+We have chosen to combine a weighted Voronoi Tessellation approach to generate ``cells'' on the map, which are assigned to drones based on their position, and their speed, in such a manner that every drone completes their task at roughly the same time.
+Within these cells, drones are given a set of waypoints to follow, which are generated using the ``Boustrophedon`` (Also known as the Lawnmower) path planning algorithm.
+While this approach is less adaptable than EN-MASCA-style systems in other scenarios, their behavior is easy for operators to understand and predict, a critical factor in time-critical Maritime Search and Rescue operations.
 
-\cite{RN1} proposes a framework for a timeline-based decision-support visualization tool (``StarVis'') for multi-UAV missions and found that a local visualization focused on individual UAVs yielded better performance, higher Situational Awareness, and reduced workload due to verification.
-The global visualization, which provided data across the entire swarm, led to worse outcomes, despite showing the user exactly how individual breakages affected the larger schedule.
-This result suggests that HCI design must carefully balance information richness with the limits of human attention.
+\subsection{Digital Twins: Definitions, Abstractions, and MSAR}\label{subsec:digital-twins:-definitions-abstractions-and-msar}
+Digital Twins are commonly described as digital representations of physical assets or processes that remain synchronized with its real-world counterpart.
+These are, notably, different from Digital Models (no data link), Digital Shadows (one-way physical-to-digital data link).
 
-Ecological Interface Design (EID) offers a different approach, advocating for deeply-detailed displays that reveal the underlying structure of a work domain, so that operators can diagnose and respond to unforeseen events.
-In supervisory ATC tasks, Ecological interfaces demonstrate better fault diagnosis of automated advice and improved transparency.
-However, studies like~\cite{10.1007/s10111-017-0438-y} also highlight the need for careful design to prevent information overload, and that the benefits of EID may be most beneficial for highly-trained operators and when the domain's constraints are generally stable.
+DTs can reduce cognitive workload by abstracting away low-level details, outsourcing tasks like aggregating different sensor streams/assorted metrics, enable predictive analysis, and supporting decision-making tools like path planners and alert systems.
+These tools can then act consistently and transparently on behalf of the human supervisor.
+In maritime applications, DTs have been used to optimise ship routes, monitor vessel health via operational metrics, with a focus on engineering and maintenance applications~\cite{DT_maritime_applications}.
 
-BEACON's interface design seeks to draw from these findings selectively.
-The central mission map and the coverage visualization act as a configural display of spatial constraints, such as the mission boundary, individual voronoi cells, and each drone's assigned sweep paths.
-This echo's EID's emphasis on revealing the underlying structure of the work domain.
+BEACON adopts the ideas of DT in its layered architecture and decision-support functions, but it does not implement a real-time data link with physical drones, and instead simulates the drone swarm within the application itself.
+This decision was made to focus on the design of the interface, and the swarm coordination algorithms, without needing to worry about the technical challenges of real-time data synchronization, which will be implemented in future work.
+It's therefore best described as a ``Digital Model/Shadow'' prototype, in that it's a high-fidelity simulation of a physical system with the accompanying User Interface (UI) that is designed to be part of a full Digital Twin system.
+Being explicit about this scoping decision is important, to avoid conflating simulation with operational deployment and to focus on human-operator workload mitigation and the design of the human-swarm interface.
 
-At the same time, BEACON avoids a deliberately avoids an overly-dense global abstraction of all drones and tasks into one widget, instead providing localised drone and anomaly patterns, in addition to actionable alerts.
-This implementation goes in-line with earlier findings that asset-focused visualizations increase performance, and therefore reduce workload.
+\subsection{HCI in Supervisory Control Systems}\label{subsec:supervisory-hci}
 
-\subsection{Workload Measurement and HCI Evaluation}\label{subsec:workload-measurement-and-hci-evaluation}
+HCI research for supervisory control systems focuses on designing interfaces for human operators who oversee and manage autonomous systems.
+\cite{AUTOMATIONEFFECTONUAVROUTING} found that excessively automated, simplistic displays can inadvertently increase operator workload by making debugging difficult, reducing situational awareness, and encouraging automation bias.
+\cite{CUMMINGS2007339} found that operators supervising multiple UAVs, while experiencing high workload, would adopt load-shedding strategies, where they compartmentalize their attention to a small set of drones.
 
-NASA-TLX is a widely used tool for measuring subjective workload in a quantitative manner.
-Introduced in~\cite{HART1988139}, it assesses six dimensions of workload: Mental, Physical, and Temporal Demand, Performance, Effort, and Frustration.
-Each dimension is rated on a scale from 0 to 100, and then is weighted based on pairwise comparisons made by the subject to determine each factor's relative importance to the workload.
-The final workload score is calculated as a weighted average of the six dimensions, providing a comprehensive measure of the operator's perceived workload.
+BEACON's interface combines an emphasis on revealing structure with constraints from research on supervisory control that warn against overly-complex global views of the system.
+The mission map and coverage overlays act as configurable displays of our spatial constraints, like the mission boundary, Voronoi cells, and drone paths, while alerts and on-map notifications provide localised information.
+The layout's design would be guided by various display design principles, like the Proximity Compatibility Principle.
 
-However, while NASA-TLX is a powerful tool for assessing subjective workload, it is important to complement it with objective performance metrics like intervention frequency, and response times to get a thorough understanding of the operator's experience.
-Purely relying on subjective measures, even when transformed into scores, can miss important nuances in how different operators interact with the system.
+\subsection{Workload Measurement and NASA-TLX}\label{subsec:workload-measurement-and-nasa-tlx}
+
+NASA-TLX (Task Load Index) is a widely-used subjective workload assessment tool that measures perceived workload across a set of dimensions:
+
+\begin{itemize}
+    \item Mental Demand - How mentally demanding was the task?
+    \item Physical Demand - How physically demanding was the task?
+    \item Temporal Demand - How hurried or rushed was the pace of the task?
+    \item Performance - How successful were you in accomplishing what you were asked to do?
+    \item Effort - How hard did you have to work to accomplish your level of performance?
+    \item Frustration Level - How insecure, discouraged, irritated, stressed, and annoyed were you?
+\end{itemize}
+
+Each dimension is rated on a scale from 0 to 100, and then weighted based on pairwise comparisons to determine the relative importance of one dimension over another.
+
+Recent reviews of NASA-TLX, however, have raised concerns about NASA-TLX's conceptual clarity, and its validity in interactive applications.
+Systematic analyses of NASA-TLX have found that many studies use it without clearly defining workload, and apply inconsistent weightings, leading to difficulties in reproducing and comparing the results.
+
+BEACON chooses to adopt NASA-TLX despite these caveats due to its widespread use and acceptance in human workload assessment, its clean mapping to MSAR-like supervision, where mental and temporal demand, effort and frustration are particularly important.
+It is also practical for repeated use in simulation, and can be easily implemented.
+At the same time, TLX scores are interpreted cautiously and are always complemented with objective operational metrics like alert burden, and intervention rate, in line with the recommendations given by~\cite{BABAEI2025103515}.

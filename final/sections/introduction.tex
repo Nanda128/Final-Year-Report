@@ -1,30 +1,39 @@
 \section{introduction}\label{sec:introduction}
 
-\subsection{Motivation And Context}\label{subsec:motivation-and-context}
+\subsection{Motivation}\label{subsec:motivation}
 
-Maritime Search and Rescue (MSAR) operations are time-critical operations where survival rates correlate directly to response time.
-\cite{INDONESIA2021MSARSURVIVAL} offers an example of a study that implements the Kaplan-Meier Estimator, a type of Survival Function, to determine the correlation between survival rates and response time.
+Search and Rescue (SAR) operations are characterized by their inherent urgency and uncertainty.
+Empirical analyses of SAR missions indicate that the likelihood of survival declines sharply as search time increases, to the point that missions may eventually become futile if continued indefinitely.
+In the context of maritime incidents, survival and resuscitation probabilities are strongly linked to the duration of time spent submerged or exposed.
+For example, ~\cite{RN2}, states that the probability of survival/resuscitation decreases significantly after 30 minutes of submersion at >6°C, and after 90 minutes at <6°C\@.
 
-However, response times are usually hampered by the issues inherent to current traditional MSAR methods, like resource constraints, uncertainty, and adaptability, as established by ~\cite{KILIC2025106692}.
-Within this context, Unmanned Aerial Vehicle (UAV) / Unmanned Surface Vessel (USV) swarms present a promising solution to enhance MSAR operations.
+Traditional Maritime Search and Rescue (MSAR) relies on crewed helicopters, vessels, and aircraft.
+Keeping these assets at ``full readiness'', which in the context of MSAR means they must be adequately maintained, crewed, fuelled, and immediately deployable, can be difficult if not economically impossible in some regions.
+Delays due to limited readiness directly translate into an increase in response time, as time that should be spent on the operation is spent remediating issues at sea, which could lead to a decrease in survival rates.
 
-We have existing research on the use of UAVs in Search and Rescue operations, like in~\cite{7761074}.
-It found that drone swarms could provide increased search coverage, faster response times, and reduced risk to human rescuers.
+Research into the Human operators indicates the cognitive and physical demands of MSAR operations can lead to degraded performance.
+\cite{riverine_MSAR_stress} directly reports that conditions combining higher physiological stress (like an increased heart rate) and distraction lead to lowered search success.
+The paper interprets this as MSAR performance, at least in a riverine context, is significantly impacted by distraction, fatigue, and overwork.
+Operators reporting neither stress nor exertion located 78\% of deployed targets, while crew reporting both conditions located only 57\%.
+Operators reporting only Exertion located 70\% of targets, while those reporting only Distraction located 57\% of targets.
+While the paper stops short of claiming a perfectly isolated causal relationship due to factors like experience, and other pre-SAR factors, it does suggest that the physical and cognitive demands of MSAR are impacted by the conditions of the operators, and that these conditions could be improved leading to better performance from the operators.
 
-However, the researchers had to rely on a team of human operators to manage drones one-to-one.
-When such solutions are scaled up, human operators can quickly reach cognitive overload, reducing response times.
-Such solutions are also manpower-intensive, which can be economically infeasible for some nations.
+~\cite{7761074} shows that Unmanned Aerial Vehicles(UAVs) and Unmanned Surface Vessels(USVs) can be used to augment MSAR operations, by providing rapid aerial and surface coverage.
+However, this system remained non-autonomous or semi-autonomous, relying on a team of human operators to control the drones either one-to-one or in small groups.
+This would occur due to regulatory constraints, safety concerns, and incomplete trust in onboard autonomy.
 
-Digital Twins, which are virtual replicas of physical systems that enable real-time monitoring, offer a way to merge state information, drone control tools, and decision support into a single interface.
-This has the potential to decrease cognitive load on operators, while enabling manpower-efficient drone management, since it fosters one-to-many relationships between the operator and their drones.
+As the number of involved drones increases, these control schemes would struggle to scale, facing manpower issues, and cognitive workload from inter-operator coordination.
+Digital Twin(DT) frameworks promise to ease these issues by aggregating state information, predicting behavior, and supporting decision-making within a single interactive model.
 
-This project introduces BEACON, a Digital Twin Framework for Autonomous Drone Swarm Coordination in Maritime Search and Rescue operations.
-Built in React, and TypeScript, BEACON simulates a swarm of autonomous drones within a bounded mission space, presenting the drone's real-time behaviour through a mission interface.
+BEACON aims to explore how DT-inspired architectures and HCI principles can be combined to support a single operator supervising a co-ordinated swarm of autonomous drones, in an MSAR-like scenario.
 
-BEACON focuses on a top-down view of the mission space, with a set of drones as chosen by the user.
-The user can then choose to generate search patterns, which optimally divide the search area among individual drones, depending on their position.
-These drones are then given a set of waypoints to follow, before they hover-in-place unless told to Return to Base.
+\subsection{Contributions}\label{subsec:contributions}
+This project seeks to contribute the following:
 
-The primary objective of this project is to explore how combining interface design, swarm coordination methods, and task automation can create a system that reduces operator workload and maintain situational awareness while supervising several drones.
-It intends to use NASA-TLX and assorted operational metrics to act as the backbone of the evaluation framework.
-A secondary objective was to study the intricacies of automatic drone navigation in a maritime environment, using existing optimization solutions.
+\begin{itemize}
+    \item A Digital Twin-inspired Architecture for MSAR drone swarms,
+    \item A workload-aware mission-control interface,
+    \item An evaluation framework integrated into the application, using subjective tools like NASA-TLX and objective operational metrics,
+    \item A study of DT and supervisory-HCI literature in the context of the applications.
+\end{itemize}
+
