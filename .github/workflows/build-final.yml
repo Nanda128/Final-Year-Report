@@ -33,6 +33,30 @@ jobs:
           set -euo pipefail
           bash src/scripts/build_report.sh final
 
+      - name: Install conversion tools (LibreOffice + python fallback + rclone)
+        run: |
+          sudo apt-get update
+          # LibreOffice provides the best fidelity for PDF->DOCX but is large
+          sudo apt-get install -y --no-install-recommends libreoffice
+          python3 -m pip install --upgrade pip || true
+          python3 -m pip install pdf2docx || true
+          # install rclone for optional Google Drive uploads
+          curl -fsSL https://rclone.org/install.sh | sudo bash || true
+
+      - name: Convert PDF -> DOCX (LibreOffice preferred, fallback to pdf2docx)
+        run: |
+          set -euo pipefail
+          OUTDIR=.
+          PDF=Final_FYP-DT-MSAR_23070854.pdf
+          DOCX=Final_FYP-DT-MSAR_23070854.docx
+          echo "Converting $PDF -> $DOCX"
+          if command -v libreoffice >/dev/null 2>&1; then
+            libreoffice --headless --convert-to docx --outdir "$OUTDIR" "$PDF" || true
+          fi
+          if [ ! -f "$OUTDIR/$DOCX" ]; then
+            python3 -c "from pdf2docx import Converter; conv=Converter('Final_FYP-DT-MSAR_23070854.pdf'); conv.convert('Final_FYP-DT-MSAR_23070854.docx'); conv.close()"
+          fi
+
       - name: Ensure version script is executable
         run: |
           chmod +x .github/scripts/version_bump.py || true
@@ -113,12 +137,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload DOCX to release (if release created)
+        if: steps.get_tag.outputs.tag != ''
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Final_FYP-DT-MSAR_23070854.docx
+          asset_name: Final_FYP-DT-MSAR_23070854.docx
+          asset_content_type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload generated PDF
         uses: actions/upload-artifact@v4
         with:
           name: final-pdf
           path: |
             Final_FYP-DT-MSAR_23070854.pdf
+
+      - name: Upload generated DOCX
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-docx
+          path: |
+            Final_FYP-DT-MSAR_23070854.docx
 
       - name: Upload auxil and log artifacts
         uses: actions/upload-artifact@v4
