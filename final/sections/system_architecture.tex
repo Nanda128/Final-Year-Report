@@ -1,0 +1,51 @@
+\section{System Architecture}\label{sec:system-architecture}
+
+BEACON is designed with a five-layered architecture, with each layer responsible for specific functions.
+The layers are as follows:
+
+\subsection{Simulated Physical Layer}\label{subsec:simulated-physical-layer}
+
+The Simulated Physical Layer is responsible for simulating the physical environment and the drones' interactions with it.
+The simulated environment comprises a variable bounded mission space, defined by the user, rendered as a water texture with a faint grid overlay.
+A central blue circle marks the ``Drone Hub'' in the center of the grid.
+Anomalies, such as people in the water, lifeboats, or debris are generated pseudorandomly based on the seed, approximating the distribution of such anomalies in real-world MSAR operations.
+
+\subsection{Individual Drone Autonomy Layer}\label{subsec:individual-drone-autonomy-layer}
+
+Each simulated drone has state variables, such as position, velocity, heading, and battery level.
+The drones follow boustrophedon (lawnmower) paths within their assigned Voronoi cells, generated at the Swarm-Level Coordination Layer.
+A battery-aware return-to-base system monitors the minimum estimated time to reach the Drone Hub safely.
+When the battery level drops below a safe threshold, the drone automatically interrupts its current task and returns to the Drone Hub for recharging.
+
+Each drone also responds to communication degradation, which is simulated as a function of distance from the Drone Hub and the number of drones in the swarm.
+When communication degrades, drones will continue to follow their last given path, and will buffer any updates such as newly scanned anomalies.
+It will then release this buffered information once communication is re-established, which can be used to update the Digital Twin and the human-swarm interface.
+
+\subsection{Swarm-Level Coordination Layer}\label{subsec:swarm-level-coordination-layer}
+
+The mission-space is partitioned using weighted Voronoi Tessellation, generating cells based on the drones' positions and speeds.
+Faster drones receive larger cells, while slower drones receive smaller cells, to ensure that drones complete their assigned search areas at roughly the same time.
+Within each cell, boustrophedon sweeps are generated with a custom overlap percentage (15\% by default) to ensure robust coverage.
+
+Cell boundaries act as a first line of collision avoidance, with nominal paths within cells to ensure optimal coverage while avoiding obstacles.
+
+\subsection{Digital Twin \& Decision Support Layer}\label{subsec:digital-twin-decision-support-layer}
+
+A central state management system maintains the state of the simulated drones, through drone states, anomaly states, paths, and mission parameters.
+This layer computes derived indicators such as alert burden, comms resilience, and coverage efficiency, which are then used to generate alerts and notifications for the human-swarm interface.
+While this layer is currently simulated, it is intended to be connected to real-time data from physical drones in future interactions, to create a full Digital Twin system.
+
+\subsection{Human-Swarm Interface Layer}\label{subsec:human-swarm-interface-layer}
+
+The top-level interface comprises a central top-down map view of the mission space, showing drones, anomalies (if not hidden), coverage paths and assigned cells if generated.
+Above the map, there is also a metrics dashboard showing key indicators such as coverage efficiency, alert burden, and comms resilience.
+Under the map, alerts and notifications are shown in a feed, following a model similar to the flight deck alerting systems in Crew Alerting Systems used in aircraft.
+This means that alerts are prioritized based on severity, such as Advisories, Amber Cautions, Red Warnings, and Status Alerts, similar to the Central Alerting Systems used in Aviation~\cite{RN3}.
+
+These alerts are generated based on the state of the drones, such as low battery, communication degradation, or anomaly detection.
+The alerts are then accompanied by an associated chime, and a visual notification on the map, to ensure that operators are aware of critical events.
+
+Prior to mission start, the user can manage scenarios, pick through a list of pre-generated scenarios, or generate a custom scenario by inputting parameters.
+After the mission, they can also review the mission's performance, through a debriefing screen showing key metrics, and an optional NASA-TLX workload assessment form.
+
+The layout and the appearance are informed by HCI principles, which will be further detailed in the following section.

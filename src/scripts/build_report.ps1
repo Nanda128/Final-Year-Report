@@ -50,9 +50,29 @@ try
 
     if (Test-Path (Join-Path $auxilDir "${ReportName}_report.aux"))
     {
+        if ($env:BIBINPUTS)
+        {
+            $oldBIBINPUTS = $env:BIBINPUTS
+            $env:BIBINPUTS = "$reportDir;$env:BIBINPUTS"
+        }
+        else
+        {
+            $oldBIBINPUTS = $null
+            $env:BIBINPUTS = $reportDir
+        }
+
         Push-Location $auxilDir
         bibtex "${ReportName}_report" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'bibtex.scripts.log')
         Pop-Location
+
+        if ($null -ne $oldBIBINPUTS)
+        {
+            $env:BIBINPUTS = $oldBIBINPUTS
+        }
+        else
+        {
+            Remove-Item env:BIBINPUTS -ErrorAction SilentlyContinue
+        }
     }
 
     pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$auxilDir" "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass2.scripts.log')

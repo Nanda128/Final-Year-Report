@@ -7,7 +7,7 @@ Empirical analyses of SAR missions indicate that the likelihood of survival decl
 In the context of maritime incidents, survival and resuscitation probabilities are strongly linked to the duration of time spent submerged or exposed.
 For example, ~\cite{RN2}, states that the probability of survival/resuscitation decreases significantly after 30 minutes of submersion at >6°C, and after 90 minutes at <6°C\@.
 
-Traditional Maritime Search and Rescue (MSAR) relies on crewed helicopters, vessels, and aircraft.
+Traditional Maritime Search and Rescue (MSAR) relies on crewed vehicles like helicopters, seaborne vessels, and aircraft.
 Keeping these assets at ``full readiness'', which in the context of MSAR means they must be adequately maintained, crewed, fuelled, and immediately deployable, can be difficult if not economically impossible in some regions.
 Delays due to limited readiness directly translate into an increase in response time, as time that should be spent on the operation is spent remediating issues at sea, which could lead to a decrease in survival rates.
 
@@ -18,7 +18,7 @@ Operators reporting neither stress nor exertion located 78\% of deployed targets
 Operators reporting only Exertion located 70\% of targets, while those reporting only Distraction located 57\% of targets.
 While the paper stops short of claiming a perfectly isolated causal relationship due to factors like experience, and other pre-SAR factors, it does suggest that the physical and cognitive demands of MSAR are impacted by the conditions of the operators, and that these conditions could be improved leading to better performance from the operators.
 
-~\cite{7761074} shows that Unmanned Aerial Vehicles(UAVs) and Unmanned Surface Vessels(USVs) can be used to augment MSAR operations, by providing rapid aerial and surface coverage.
+\cite{7761074} shows that Unmanned Aerial Vehicles(UAVs) and Unmanned Surface Vessels(USVs) can be used to augment MSAR operations, by providing rapid aerial and surface coverage.
 However, this system remained non-autonomous or semi-autonomous, relying on a team of human operators to control the drones either one-to-one or in small groups.
 This would occur due to regulatory constraints, safety concerns, and incomplete trust in onboard autonomy.
 
@@ -27,13 +27,22 @@ Digital Twin(DT) frameworks promise to ease these issues by aggregating state in
 
 BEACON aims to explore how DT-inspired architectures and HCI principles can be combined to support a single operator supervising a co-ordinated swarm of autonomous drones, in an MSAR-like scenario.
 
-\subsection{Contributions}\label{subsec:contributions}
-This project seeks to contribute the following:
+\subsection{Problem Statement}\label{subsec:problem-statement}
+The central problem this project seeks to address is the challenge of effectively supervising an autonomous drone swarm in MSAR-like scenarios, while not incurring unacceptable cognitive workloads or losing situation awareness.
+
+This central problem can be broken down into the following sub-problems:
 
 \begin{itemize}
-    \item A Digital Twin-inspired Architecture for MSAR drone swarms,
-    \item A workload-aware mission-control interface,
-    \item An evaluation framework integrated into the application, using subjective tools like NASA-TLX and objective operational metrics,
-    \item A study of DT and supervisory-HCI literature in the context of the applications.
+    \item How can we design a simulation and C3I (Command, Control, Communications, and Intelligence) framework captures key MSAR constraints in a way that can evolve into a complete Digital Twin system?
+    \item How can we design an interface that reveals the structure of the search problem and exposes high-level swarm autonomy decisions while avoiding information overload?
+    \item What metrics and evaluation methods do we use to evaluate the effectiveness of the system?
 \end{itemize}
 
+\subsection{Contributions}\label{subsec:contributions}
+
+This project seeks to contribute, through the design and implementation of BEACON, a five-layer Digital Twin framework for MSAR drone swarms.
+This would be implemented as a React/TypeScript simulation.
+
+That simulation needs to include a workload-aware supervisory interface, with a top-down mission map, a four-tier EICAS-style alert hierarchy, and HCI-grounded design principles.
+This would be followed up with an evaluation framework, with explicit rationale for metrics selection and exclusions.
+Finally, this would include an analysis of prior work on MSAR, Drone Swarms, HCI in Supervisory systems, and workload measurement, to challenge common assumptions and identify BEACON's scope and limitations.
