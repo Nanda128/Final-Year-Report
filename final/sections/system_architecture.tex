@@ -1,51 +1,72 @@
 \section{System Architecture}\label{sec:system-architecture}
 
-BEACON is designed with a five-layered architecture, with each layer responsible for specific functions.
-The layers are as follows:
+BEACON is implemented as a browser-based application for Maritime Search and Rescue swarm simulation.
+The system follows a layered client-side architecture in which environment generation, swarm logic, communication effects, alerting, rendering, and evaluation are complete in-browser.
+This arrangement avoids backend dependencies while preserving BEACON's deterministic scenario generation.
 
-\subsection{Simulated Physical Layer}\label{subsec:simulated-physical-layer}
+\subsection{Simulated Mission Area}\label{subsec:simulated-mission-area}
 
-The Simulated Physical Layer is responsible for simulating the physical environment and the drones' interactions with it.
-The simulated environment comprises a variable bounded mission space, defined by the user, rendered as a water texture with a faint grid overlay.
-A central blue circle marks the ``Drone Hub'' in the center of the grid.
-Anomalies, such as people in the water, lifeboats, or debris are generated pseudorandomly based on the seed, approximating the distribution of such anomalies in real-world MSAR operations.
+The simulated mission space is defined as a configurable maritime sector parameterized by width, length, seed, and anomaly configuration.
+By default, the sector is 5km/5km, but users can adjust dimensions to explore different scales.
 
-\subsection{Individual Drone Autonomy Layer}\label{subsec:individual-drone-autonomy-layer}
+Environmental conditions are generated in a deterministic manner using a pseudorandom number generator.
+This ensures that identical seeds yield the same sector geometry, sea conditions, and anomaly placements.
 
-Each simulated drone has state variables, such as position, velocity, heading, and battery level.
-The drones follow boustrophedon (lawnmower) paths within their assigned Voronoi cells, generated at the Swarm-Level Coordination Layer.
-A battery-aware return-to-base system monitors the minimum estimated time to reach the Drone Hub safely.
-When the battery level drops below a safe threshold, the drone automatically interrupts its current task and returns to the Drone Hub for recharging.
+Each generated scenario contains environmental descriptors such as the sea's state, wind speed, and visibility, which can be used to inform drone battery consumption, sensor effectiveness, and speed.
+They also include a set of anomalies, deterministically placed across the map, based on the seed.
+The implemented anomaly classes are ``Person in Water'', ``Lifeboat'', ``Debris'', and ``False Positive''.
+Anomaly placement is constrained to within the sector, and avoiding the Drone Hub in the center of the grid.
 
-Each drone also responds to communication degradation, which is simulated as a function of distance from the Drone Hub and the number of drones in the swarm.
-When communication degrades, drones will continue to follow their last given path, and will buffer any updates such as newly scanned anomalies.
-It will then release this buffered information once communication is re-established, which can be used to update the Digital Twin and the human-swarm interface.
+\subsection{Central Mission State and Simulation Engine}\label{subsec:central-mission-state-and-simulation-engine}
 
-\subsection{Swarm-Level Coordination Layer}\label{subsec:swarm-level-coordination-layer}
+BEACON maintains mission state through a central application context that functions as an in-browser mission twin.
+This state store holds the active scenario, the state of the drone fleet, sensor configuration, communication settings, Voronoi cells, coverage plans, detection logs, alerts and evaluation.
+Mission execution gets divided into two principal update pipelines.
 
-The mission-space is partitioned using weighted Voronoi Tessellation, generating cells based on the drones' positions and speeds.
-Faster drones receive larger cells, while slower drones receive smaller cells, to ensure that drones complete their assigned search areas at roughly the same time.
-Within each cell, boustrophedon sweeps are generated with a custom overlap percentage (15\% by default) to ensure robust coverage.
+First, a frame-synchronized rendering loop updates the drone motion, heading, battery consumption, communication state, and path progress.
+Second, a time sensor loop evaluates possible detections and false positives at a configured interval.
 
-Cell boundaries act as a first line of collision avoidance, with nominal paths within cells to ensure optimal coverage while avoiding obstacles.
+This separation allows continuous behavior while allowing behavior like sensing and event generation dependent on user-supplied parameters.
 
-\subsection{Digital Twin \& Decision Support Layer}\label{subsec:digital-twin-decision-support-layer}
+\subsection{Swarm Coordination, Coverage Planning, and Battery-Aware Autonomy}\label{subsec:swarm-coordination-coverage-planning-and-battery-aware-autonomy}
 
-A central state management system maintains the state of the simulated drones, through drone states, anomaly states, paths, and mission parameters.
-This layer computes derived indicators such as alert burden, comms resilience, and coverage efficiency, which are then used to generate alerts and notifications for the human-swarm interface.
-While this layer is currently simulated, it is intended to be connected to real-time data from physical drones in future interactions, to create a full Digital Twin system.
+Swarm coordination combines spatial partitioning, coverage planning, and battery-aware autonomy to enable efficient search patterns.
+In the context of BEACON, spatial partitioning is done through a weighted implementation of Voronoi Tessellation, derived from current drone positions and their individual speeds.
+These cells are balanced such that faster vehicles cover proportionally larger cells so that the workload is distributed according to capability.
 
-\subsection{Human-Swarm Interface Layer}\label{subsec:human-swarm-interface-layer}
+For each cell, a coverage plan is generated using a boustrophedon (lawnmower) search pattern, which is a common method for systematic area coverage (\cite{10.1007/978-1-4471-1273-0_32}).
+This pattern is generated as a set of waypoints with a configurable overlap ratio, thereby providing a structured area search over random searching.
+At runtime, these drones will follow these waypoints sequentially.
 
-The top-level interface comprises a central top-down map view of the mission space, showing drones, anomalies (if not hidden), coverage paths and assigned cells if generated.
-Above the map, there is also a metrics dashboard showing key indicators such as coverage efficiency, alert burden, and comms resilience.
-Under the map, alerts and notifications are shown in a feed, following a model similar to the flight deck alerting systems in Crew Alerting Systems used in aircraft.
-This means that alerts are prioritized based on severity, such as Advisories, Amber Cautions, Red Warnings, and Status Alerts, similar to the Central Alerting Systems used in Aviation (\cite{RN3}).
+Energy management is implemented as a supervisory layer above path planning.
+For each drone, the battery is estimated in minutes according to the type of drone and current environmental conditions.
+It uses this battery life information, and the distance to the drone hub, to determine whether a drone has gone past a safe threshold to return to the Drone Hub.
+When the projected battery life falls below the required margin, the battery management layer overrides any active movement tasks and redirects the vehicle to the Drone Hub in the center of the grid.
+These battery warnings are then logged and propagated as alerts.
 
-These alerts are generated based on the state of the drones, such as low battery, communication degradation, or anomaly detection.
-The alerts are then accompanied by an associated chime, and a visual notification on the map, to ensure that operators are aware of critical events.
+\subsection{Communications, Alerting, \& Debrief Data Pipeline}\label{subsec:communications-alerting-debrief-data-pipeline}
 
-Prior to mission start, the user can manage scenarios, pick through a list of pre-generated scenarios, or generate a custom scenario by inputting parameters.
-After the mission, they can also review the mission's performance, through a debriefing screen showing key metrics, and an optional NASA-TLX workload assessment form.
+BEACON includes an optional communication model that represents signal degradation as a function of distance from the Drone Hub and configurable behavior.
+From this model, the system simulates per-drone signal quality, latency, packet loss, and communication blackouts.
 
-The layout and the appearance are informed by HCI principles, which will be further detailed in the following section.
+Event messages may then be transmitted immediately, delayed in a queue of outbound messages, or buffered while a drone is disconnected.
+Through this mechanic, communication quality materially impacts the operator's situational awareness and ability to respond to events, as well as the drone's ability to report detections and receive commands.
+
+Alert generation is implemented as a pure, rule-based system driven by mission events and drone states.
+The system receives a stream of events, such as detections, battery warnings, and communication blackouts, into four tiers of alerting, inspired by Central Alerting Systems (EICAS) used in aviation (\cite{RN3}).
+Alerts are categorized into four tiers, Advisory, Caution, Warning, and Status, based on their severity.
+Each alert is also accompanied by a specific audio cue for each tier, to provide additional situational awareness through auditory channels.
+
+When a mission ends, BEACON persists a snapshot of the mission metrics, before directing the user to an optional NASA-TLX questionnaire.
+This debrief pipeline supports the subsequent visualization, export, and analysis of mission performance and subjective workload data.
+
+\subsection{Presentation and Operator-facing Application Flow}\label{subsec:presentation-and-operator-facing-application-flow}
+
+The user-facing side of the application is organized as a staged workflow comprising a ``main'' landing page, a setup page, an active simulation page, and a post-mission debrief sequence.
+The landing page provides access to scenario presets, and saved custom scenarios, if any.
+If they choose a preset, or create a new scenario, they are directed to the setup page, where they can adjust the scenario parameters, such as the number and type of drones and environmental conditions.
+After launch, the user is directed to the simulation page, where they are presented with the mission map, a metrics dashboard, alert panel, environment status, and a detection log.
+After the mission ends, they get directed to a debrief sequence, where they can perform a brief optional NASA-TLX questionnaire, and review their performance metrics.
+
+Since simulation logic is separate from visual rendering, and stored in domain-operated modules, the architecture remains easily extensible.
+In principle, the simulation could be extended to act as a true Digital Twin with a real-time data link to physical drones, while still preserving the current interface and analytics pipeline.
