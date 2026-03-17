@@ -2,12 +2,57 @@
 
 \subsection{Workflow Structure and Information Grouping}\label{subsec:workflow-structure-and-information-grouping}
 
+BEACON adopts a staged-interaction model in which scenario selection, mission configuration, mission execution, and post-mission debrief are in distinct views.
+This structure reduces interface density during mission execution, and a clear separation of concerns between different stages of the workflow.
+
+Within the mission simulation view, the map is the primary information surface, with metrics, alerts, and detection logs placed in secondary adjacent panels to maintain visibility without overwhelming the central display.
+The controls are grouped into a single foldable drawer, which collapses into the bottom of the user's screen, to further reduce visual clutter.
+
+This organization choice supports rapid transitions between different stages of the workflow, like mission controls, performance analysis, and scenario configuration.
+The operator can easily inspect the mission at a glance through the alert panel, and the map, then shift attention to detailed controls by expanding the control panel.
+
 \subsection{Map-centric visualisation and interaction}\label{subsec:map-centric-visualisation-and-interaction}
+
+BEACON uses a custom 2D Canvas Renderer rather than a general-purpose mapping framework.
+The display presents the mission sector from a top-down perspective, and supports on-map decisions like selecting drones by clicking on them, drawing a box over multiple drones to select them, and right-clicking on spaces on the map to issue new waypoints.
+The user can also hold the shift key with a drone selected to issue multiple waypoints, which are then followed sequentially by the drone.
+
+Drones, anomalies, sensor footprints, Voronoi cells, coverage path plans, waypoints, and communication status are all drawn as layered overlays on a common map.
+This interaction model is designed for supervisory control rather than continuous direct control.
+Operators can select drones individually or in groups, and place new waypoints to reposition them when manual intervention is necessary.
+
+The user can also toggle the visibility of anomalies, through a ``Fog-of-War'' mechanic, which hides anomalies until they are detected by drones.
+This mechanic reflects the information-asymmetry inherent to real-world MSAR operations.
+To accompany this mechanic, the system also allows the user to validate detections by pressing a ``Validate Scans'' button.
+When activated, this button checks all current detections against the ground truth and identifies missed anomalies on the map, and highlights them on the map.
 
 \subsection{Alerting and Supervisory Attention Management}\label{subsec:alerting-and-supervisory-attention-management}
 
-\subsection{Visual Design, Theming, and Accessibility}\label{subsec:visual-design-theming-and-accessibility}
+The Alert subsystem is designed to manage the operator's attention by supporting the user giving graded levels of attention to different events, rather than demanding equal attention to all events.
+For example, a communication blackout, while still being important, may not require the same level of attention as the user has very little agency in responding to it.
 
-\subsection{Human-in-the-Loop Intervention and Mission Configuration}\label{subsec:human-in-the-loop-intervention-and-mission-configuration}
+Alerts are categorized by source and severity, then displayed with different visual and auditory cues to indicate their importance.
+Operators can then choose to attend these alerts based on their current workload, search the alert history by categories, and acknowledge alerts to mark them as read.
+
+The adopted severity structure, inspired by aviation's Central Alerting Systems (as per~\cite{RN3}), categorizes alerts into four tiers: Advisory, Caution, Warning, and Status.
+Conditions are mapped to these tiers based on their severity and required response.
+For example, detection events of people in water are categorized as red warnings, while detection events of debris field are categorized as ``Advisory'' alerts.
+Such differentiation is vital in MSAR supervision, where operators must filter through increasingly dense information streams which can obscure critical events.
+
+\subsection{Visual Design and Accessibility}\label{subsec:visual-design-and-accessibility}
+
+The interface of BEACON is divided into three modes, Light, Dark, and Auto.
+By default, the system uses the Auto mode, which is set to either Light or Dark mode based on the user's system preference.
+
+The entire application's color scheme is defined centrally by ``Theme Tokens'' which are used to define the colors of all elements in the interface, such as the text, alerts, and controls.
+Status colors still follow the same semantics, with red representing warnings, amber representing caution, and green representing normal.
+
+Accessibility provisions include support for color-blind users by ensuring that critical information is conveyed through more channels than just color, like audio cues, and text.
+Certain sections of the interface include specific screen-reader support tones, with indicated ``polite'' tones for non-urgent information like Tutorials, and ``assertive'' tones for errors.
+Form controls, toggles, and action buttons each have explicit labelling for assistive technologies like screen readers.
+
+In addition, the project's Theme Tokens are designed to meet WCAG 2.2 AA contrast requirements, ensuring that text and critical information are easily distinguishable for users with visual impairments.
+
+\subsection{Human-in-the-Loop Intervention \& Mission Configuration}\label{subsec:human-in-the-loop-intervention-and-mission-configuration}
 
 \subsection{Onboarding and Robustness}\label{subsec:onboarding-and-robustness}
