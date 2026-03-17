@@ -33,15 +33,12 @@ jobs:
           set -euo pipefail
           bash src/scripts/build_report.sh final
 
-      - name: Install conversion tools (LibreOffice + python fallback + rclone)
+      - name: Install conversion tools (LibreOffice + python fallback)
         run: |
           sudo apt-get update
-          # LibreOffice provides the best fidelity for PDF->DOCX but is large
           sudo apt-get install -y --no-install-recommends libreoffice
           python3 -m pip install --upgrade pip || true
           python3 -m pip install pdf2docx || true
-          # install rclone for optional Google Drive uploads
-          curl -fsSL https://rclone.org/install.sh | sudo bash || true
 
       - name: Convert PDF -> DOCX (LibreOffice preferred, fallback to pdf2docx)
         run: |
