@@ -8,7 +8,7 @@ This structure reduces interface density during mission execution, and a clear s
 Within the mission simulation view, the map is the primary information surface, with metrics, alerts, and detection logs placed in secondary adjacent panels to maintain visibility without overwhelming the central display.
 The controls are grouped into a single foldable drawer, which collapses into the bottom of the user's screen, to further reduce visual clutter.
 
-This organization choice supports rapid transitions between different stages of the workflow, like mission controls, performance analysis, and scenario configuration.
+This organisation choice supports rapid transitions between different stages of the workflow, like mission controls, performance analysis, and scenario configuration.
 The operator can easily inspect the mission at a glance through the alert panel, and the map, then shift attention to detailed controls by expanding the control panel.
 
 \subsection{Map-centric visualisation and interaction}\label{subsec:map-centric-visualisation-and-interaction}
@@ -44,15 +44,37 @@ Such differentiation is vital in MSAR supervision, where operators must filter t
 The interface of BEACON is divided into three modes, Light, Dark, and Auto.
 By default, the system uses the Auto mode, which is set to either Light or Dark mode based on the user's system preference.
 
-The entire application's color scheme is defined centrally by ``Theme Tokens'' which are used to define the colors of all elements in the interface, such as the text, alerts, and controls.
-Status colors still follow the same semantics, with red representing warnings, amber representing caution, and green representing normal.
+The entire application's colour scheme is defined centrally by ``Theme Tokens'' which are used to define the colours of all elements in the interface, such as the text, alerts, and controls.
+Status colours still follow the same semantics, with red representing warnings, amber representing caution, and green representing normal.
 
-Accessibility provisions include support for color-blind users by ensuring that critical information is conveyed through more channels than just color, like audio cues, and text.
+Accessibility provisions include support for colour-blind users by ensuring that critical information is conveyed through more channels than just colour, like audio cues, and text.
 Certain sections of the interface include specific screen-reader support tones, with indicated ``polite'' tones for non-urgent information like Tutorials, and ``assertive'' tones for errors.
 Form controls, toggles, and action buttons each have explicit labelling for assistive technologies like screen readers.
 
 In addition, the project's Theme Tokens are designed to meet WCAG 2.2 AA contrast requirements, ensuring that text and critical information are easily distinguishable for users with visual impairments.
+This is achieved through an automatic contrast checker script that evaluates the contrast ratio of all Theme Tokens and produces a report indicating whether they pass or fail the WCAG 2.2 AA standards for contrast.
 
 \subsection{Human-in-the-Loop Intervention \& Mission Configuration}\label{subsec:human-in-the-loop-intervention-and-mission-configuration}
 
+BEACON supports supervisory intervention at the task-management level rather than low-level physical control.
+During setup, operators can define scenario parameters, tune sensor characteristics on drones, select specific drone models, and spawn or remove vehicles.
+
+During mission execution, operators can issue immediate or deferred return-to-base commands, adjust each drone's speed, and, if the drones are performing an automated task, activate a manual intervention mode for waypoint assignment and drone positioning.
+When not running automated coverage, operators can issue either immediate or deferred movement commands to drones by right-clicking on the map, or, when issuing a sequence of commands, by holding the shift key while right-clicking to issue multiple waypoints.
+
+This approach preserves a human-in-the-loop control model, where the operator can intervene when necessary, but the system will automatically handle low-level control.
+While still including human operators in the mission control loop, this design choice allows the operator to focus on high-level decision-making and cross-team communication over individual drone control.
+
+The autonomy stack remains responsible for path planning, battery-based return-to-base behaviour, and routine search execution, while the operator maintains the authority to redirect drones, modify mission parameters, and override autonomous behaviour.
+
 \subsection{Onboarding and Robustness}\label{subsec:onboarding-and-robustness}
+
+To support first-time users, BEACON includes an integrated tutorial system comprised of a guided overlay on top of the existing interface, and a ``help'' modal in the top bar.
+The tutorial's steps are route-aware and direct the operator through landing, setup, and simulation workflow.
+The ``help'' modal provides a list of keyboard shortcuts, which provide additional access to help and navigation workflow.
+
+Robustness is addressed through several implementation measures.
+Imported scenario files are validated against a common expected JSON schema, allowing custom scenarios to be saved locally and re-loaded.
+The debrief page can't be accessed without a completed mission, preventing errors from missing data.
+The entire application is also wrapped in a global error boundary, backed by error handlers and structured client-side error logging via the browser console.
+Although the current project does not include a dedicated automated test suite, these safeguards at runtime improve the reliability and reproducibility of interactive experiments.

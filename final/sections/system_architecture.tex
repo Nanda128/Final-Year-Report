@@ -15,7 +15,7 @@ This ensures that identical seeds yield the same sector geometry, sea conditions
 Each generated scenario contains environmental descriptors such as the sea's state, wind speed, and visibility, which can be used to inform drone battery consumption, sensor effectiveness, and speed.
 They also include a set of anomalies, deterministically placed across the map, based on the seed.
 The implemented anomaly classes are ``Person in Water'', ``Lifeboat'', ``Debris'', and ``False Positive''.
-Anomaly placement is constrained to within the sector, and avoiding the Drone Hub in the center of the grid.
+Anomaly placement is constrained to within the sector, and avoiding the Drone Hub in the centre of the grid.
 
 \subsection{Central Mission State and Simulation Engine}\label{subsec:central-mission-state-and-simulation-engine}
 
@@ -23,10 +23,10 @@ BEACON maintains mission state through a central application context that functi
 This state store holds the active scenario, the state of the drone fleet, sensor configuration, communication settings, Voronoi cells, coverage plans, detection logs, alerts and evaluation.
 Mission execution gets divided into two principal update pipelines.
 
-First, a frame-synchronized rendering loop updates the drone motion, heading, battery consumption, communication state, and path progress.
+First, a frame-synchronised rendering loop updates the drone motion, heading, battery consumption, communication state, and path progress.
 Second, a time sensor loop evaluates possible detections and false positives at a configured interval.
 
-This separation allows continuous behavior while allowing behavior like sensing and event generation dependent on user-supplied parameters.
+This separation allows continuous behaviour while allowing behaviour like sensing and event generation dependent on user-supplied parameters.
 
 \subsection{Swarm Coordination, Coverage Planning, and Battery-Aware Autonomy}\label{subsec:swarm-coordination-coverage-planning-and-battery-aware-autonomy}
 
@@ -41,12 +41,12 @@ At runtime, these drones will follow these waypoints sequentially.
 Energy management is implemented as a supervisory layer above path planning.
 For each drone, the battery is estimated in minutes according to the type of drone and current environmental conditions.
 It uses this battery life information, and the distance to the drone hub, to determine whether a drone has gone past a safe threshold to return to the Drone Hub.
-When the projected battery life falls below the required margin, the battery management layer overrides any active movement tasks and redirects the vehicle to the Drone Hub in the center of the grid.
+When the projected battery life falls below the required margin, the battery management layer overrides any active movement tasks and redirects the vehicle to the Drone Hub in the centre of the grid.
 These battery warnings are then logged and propagated as alerts.
 
 \subsection{Communications, Alerting, \& Debrief Data Pipeline}\label{subsec:communications-alerting-debrief-data-pipeline}
 
-BEACON includes an optional communication model that represents signal degradation as a function of distance from the Drone Hub and configurable behavior.
+BEACON includes an optional communication model that represents signal degradation as a function of distance from the Drone Hub and configurable behaviour.
 From this model, the system simulates per-drone signal quality, latency, packet loss, and communication blackouts.
 
 Event messages may then be transmitted immediately, delayed in a queue of outbound messages, or buffered while a drone is disconnected.
@@ -58,11 +58,11 @@ Alerts are categorized into four tiers, Advisory, Caution, Warning, and Status, 
 Each alert is also accompanied by a specific audio cue for each tier, to provide additional situational awareness through auditory channels.
 
 When a mission ends, BEACON persists a snapshot of the mission metrics, before directing the user to an optional NASA-TLX questionnaire.
-This debrief pipeline supports the subsequent visualization, export, and analysis of mission performance and subjective workload data.
+This debrief pipeline supports the subsequent visualisation, export, and analysis of mission performance and subjective workload data.
 
 \subsection{Presentation and Operator-facing Application Flow}\label{subsec:presentation-and-operator-facing-application-flow}
 
-The user-facing side of the application is organized as a staged workflow comprising a ``main'' landing page, a setup page, an active simulation page, and a post-mission debrief sequence.
+The user-facing side of the application is organised as a staged workflow comprising a ``main'' landing page, a setup page, an active simulation page, and a post-mission debrief sequence.
 The landing page provides access to scenario presets, and saved custom scenarios, if any.
 If they choose a preset, or create a new scenario, they are directed to the setup page, where they can adjust the scenario parameters, such as the number and type of drones and environmental conditions.
 After launch, the user is directed to the simulation page, where they are presented with the mission map, a metrics dashboard, alert panel, environment status, and a detection log.

@@ -10,16 +10,16 @@ The project seeks to propose a Digital Twin framework for Autonomous Drone Swarm
     \item \textbf{Individual Drone Autonomy Layer:} Each drone needs to be capable of autonomous global path calculation, rudimentary obstacle avoidance, and local state estimation.
     This can be achieved using algorithms like RRT* and Dynamic Window Approach-esque systems in combination with the system's on-board sensor suite.
 
-    \item \textbf{Swarm-Level Coordination Layer:} This layer manages the collective behavior of the drone swarm.
+    \item \textbf{Swarm-Level Coordination Layer:} This layer manages the collective behaviour of the drone swarm.
     It seeks to employ distributed consensus algorithms, like SwarmRaft, to establish the current state while reducing reliance on remote/ground-station communication.
-    Search area coverage can also be optimized at this layer, using techniques like Voronoi Tessellations to optimally divide the search area among individual drones.
+    Search area coverage can also be optimised at this layer, using techniques like Voronoi Tessellations to optimally divide the search area among individual drones.
 
     \item \textbf{Digital Twin \& Decision Support Layer:} This layer is designed to maintain a high-fidelity virtual simulation of a physical drone swarm.
     In this layer, predictive physics models could potentially be employed to detect anomalies, allowing alerts to be raised in critical situations.
     The Digital Twin could act as a decision-support system, providing enough information to human operators to allow them to make informed operational decisions.
 
     \item \textbf{Human-Swarm Interface Layer:} This layer focuses on the design of an intuitive interface that allows human operators to interact with and supervise the drone swarm in real-time.
-    The interface could potentially provide a map-based visualization of drone positions, across an operational area.
+    The interface could potentially provide a map-based visualisation of drone positions, across an operational area.
     Using systems similar to the ones employed in glass cockpit-aircraft, the interface could provide alerts and general notifications based on priority.
     Finally, the interface must also allow operators to specify search areas, designate high-priority areas, and, in some cases, directly intervene in individual drone operations.
     Such an interface needs to be intuitive, to reduce cognitive load on operators.
