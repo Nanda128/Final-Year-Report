@@ -1,0 +1,61 @@
+\section{Primary Deliverable}\label{sec:primary-deliverable}
+
+\subsection{BEACON System Overview}\label{subsec:beacon-system-overview}
+
+BEACON's five-page flow from Landing, to Setup, Simulation, NASA-TLX, and Debrief, reflects the typical lifecycle of an MSAR operation.
+
+The Landing page provides an introduction to the system, and introduces scenario presets, including a tutorial.
+The user can then choose to proceed to the Setup page, or to a dedicated Management page.
+
+The Setup page allows users to choose the number of drones, the mission boundary, and the scenario seed.
+Here, they can also list the amount of anomalies on the map, such as people in the water, lifeboats, or debris.
+They can also tweak sensor settings here.
+This page is intended to act as the planning stage and supports experimentation with different mission parameters.
+
+After setup, the user can then navigate to the Simulation page, which is the core of the system.
+This page runs the real-time simulation of the drone swarm across the map, presenting the canvas, alerts, metrics, and mission controls.
+The user can pull up a control panel from the bottom of their screen to access controls like drone commands, search pattern generation, and more.
+Here, they can also enable administrative tools like enabling or disabling Fog-of-War, which hides anomalies until they have been detected by a drone, or enabling comms degradation simulation.
+
+The user can then end the mission to navigate to a page that prompts the user to fill in an optional NASA-TLX questionnaire, to capture their perceived workload during the mission.
+Choosing to fill in the questionnaire then leads to the dedicated NASA-TLX page, after which the user is navigated to a debrief page which presents the user with their weighted NASA-TLX score and a summary of performance metrics.
+The user can export this data as JSON, or CSV, to allow for further analysis.
+
+In addition to the above, there is a dedicated Management page, which allows users to manage their scenarios, and view past performance data.
+Missions completed on the same session and browser are stored in the browser's local storage, and can be viewed here.
+Alternatively, users can also import and export their performance data as JSON files.
+
+These JSONs would then be analyzed to determine insights about the system's performance, and possible improvements for the MSAR operations team.
+
+\subsection{Environment and Scenario Modelling}\label{subsec:environment-and-scenario-modelling}
+
+The environment generator creates a bounded rectangular mission space with a configurable width and height.
+The generator then populates the environment with a configurable number of anomalies, which can be people in the water, lifeboats, or debris, or false positives.
+Each anomaly has its own detection radius, which is the furthest distance in meters at which a drone under ideal conditions could detect it.
+Here, environmental effects like the sea state that affect drone speed, sensor performance, and communication range are also modelled.
+
+Pre-defined scenario presets are also included, intended to reflect plausible MSAR scenarios, to allow for easier system testing and evaluation.
+These presets include a ``Calm Bay'', ``Rough Sea'', ``Comms Degradation'', and ``High-Stress'' scaling test scenario, each with different parameters to test different aspects of the system.
+
+\subsection{Swarm Behaviour, Coverage Planning, and Communication Degradation modelling}\label{subsec:swarm-behaviour-coverage-planning-and-communication-degradation-modelling}
+
+Swarm behaviour is defined via a weighted Voronoi Tessellation approach, defining cells on the map that are assigned to drones based on their current position and speed in such a manner to optimise search coverage and ensure that drones complete their tasks at roughly the same time.
+This is intended to avoid situations where some drones have open capacity while others are overwhelmed, leading to suboptimal search coverage and increased operator workload.
+
+The search area is partitioned into a variety of polygonal ``cells'', each having an area directly proportional to the drone's speed.
+This gives each drone an implicit ``territory'' to search.
+
+For each cell, a set of waypoints is generated using a Boustrophedon (Lawnmower) path planning algorithm (\cite{10.1007/978-1-4471-1273-0_32}), to ensure systematic coverage.
+This approach provides a predictable and explainable search pattern, despite being less adaptable than more complex reinforcement learning-based approaches like EN-MASCA (\cite{ENMASCA2025})\@.
+These paths are then rendered via canvas layers, and the drones are given a set of waypoints to follow sequentially, before returning to the Drone Hub in the center of the map.
+
+The communications model seeks to simulate the effects of communication degradation on the drone swarm, by introducing configurable communication ranges, and a probabilistic model of communication failure based on distance and environmental effects.
+Packet loss can occur based on the drone's distance from the Drone Hub, as well as the predefined sea state, and other factors defined in the scenario configuration.
+By default, the system uses information based off of~\cite{s21082848}, assuming the drones are operating in a 4G LTE network.
+
+The delay can get larger and larger as the conditions get worse, until a point where the drone is effectively disconnected from the Drone Hub, and must rely on its last known instructions and local decision-making to continue its mission.
+Any detections made while disconnected get stored in the drone's local memory as a ``buffer'' of queued messages, which are then sent to the Drone Hub all at once when the drone reconnects.
+Packet drops and delays drive alert generation to influence situational awareness and impact workload, similar to real-world MSAR operations where communication issues are common and have significant impacts on mission success.
+
+Together, these models create realistic and controllable perturbations that allow the accurate replication of real-world MSAR challenges.
+

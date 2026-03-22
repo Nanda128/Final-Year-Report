@@ -1,0 +1,55 @@
+\section{Methodology}\label{sec:methodology}
+
+The project adopts a design-science and User-Centered Design approach.
+Design-science research focuses on building and evaluating artefacts that solve identified problems, while User-Centered Design (UCD) emphasizes grounded design decisions in user needs and preferences.
+
+BEACON was developed iteratively, by defining a set of ``Issues'', each with specific ``Acceptance Criteria''.
+Each issue constitutes a feature or improvement to be implemented in the project.
+For example, Alerts were implemented as a feature, with the acceptance criteria noting the need for finding a standard to prioritize and display alerts, and the need for a visual and audio component to the alert system.
+
+
+\subsection{Objectives and Hypotheses}\label{subsec:objectives-and-hypotheses}
+
+To tie BEACON's design and evaluation to specific, verifiable hypotheses, we defined three research questions.
+
+\begin{itemize}
+    \item How effectively does BEACON's interface design improve situational awareness?
+    \item To what extent does BEACON's interface design reduce operator workload, within acceptable limits for MSAR operations?
+    \item How much does BEACON's interface optimizations to improve situational awareness improve mission success?
+\end{itemize}
+
+From these, we can derive the following hypotheses:
+
+\begin{itemize}
+    \item BEACON's interface will provide users with adequate situational awareness, as inferred from performance metrics and self-reported scores.
+    \item Workload, as measured by NASA-TLX, will increase in high-stress scenarios, but will remain roughly within acceptable limits for MSAR operations.
+    \item Missions supervised using BEACON's interface will have higher success rates, as measured by operational metrics like search coverage efficiency and target detection rate.
+\end{itemize}
+
+These research questions and hypotheses will provide the basis for the design and analysis of BEACON\@.
+
+\subsection{Development Approach, and Architecture}\label{subsec:development-approach-and-architecture}
+
+BEACON was developed in React and TypeScript.
+The map was rendered using a Canvas-based element, on which the drones, their paths, anomalies, and the mission boundary were drawn.
+
+The architecture of the system emphasizes domain purity, implementing clear separations between different, modular components of a larger system.
+Logic like the environment generator, swarm behaviour, coverage planning, alerts, metrics collection, and more, were implemented as separate modules, hooking into a central \textit{MissionControl.tsx} context provider.
+
+The main simulation loop runs in \textit{SimulationPage.tsx}, which uses the built-in \textit{requestAnimationFrame} function to update the state of the system at a fixed interval, to update drone kinematics, battery states, compute swarm adjustments, calculate per-drone communications, update sensor readings, and other related functions.
+The interface is separated into different routes, like Landing, Mission Setup, Simulation, Results, NASA-TLX, and Management.
+Transitions are handled with smooth animations, and the interface uses UI primitives like Badges, Fields, and ThemeToggles to provide consistent interaction patterns similar to other applications, while also providing a unique visual identity for BEACON\@.
+
+\subsection{Practical and Technical Considerations}\label{subsec:practical-and-technical-considerations}
+
+To keep the simulation responsive in the browser, and due to limitations in the development timeline, the physics and environmental effects are simplified.
+This trade-off facilitates a focus on HCI rather than physical modelling.
+
+Related to the above, there is no real-time data link between physical drones and the simulation, which means that BEACON is best described as a Digital Model/Shadow prototype, rather than a full Digital Twin.
+This decision was made due to the limited development and research timeline, with real-world physical testing being left for future work.
+Human subject testing was also left for future work, due to ethical and logistical considerations, with the current evaluation framework relying on operational metrics and self-reported workload scores from the simulation itself.
+
+Another important consideration was the choice of determinism versus variability in scenario generation.
+To ensure that BEACON's evaluation is reproducible, and to allow for controlled comparisons between different interface designs, the environment generator works off of a pseudorandom seed-based generator, which allows for the same scenario to be generated across different runs of the simulation, through a common ``seed''.
+Including coastal features was considered, but was ultimately left for future work to simplify environment generation and to focus on the core mechanics of drone supervision and interface design.
+

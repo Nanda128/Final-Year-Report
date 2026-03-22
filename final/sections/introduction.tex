@@ -23,9 +23,9 @@ However, this system remained non-autonomous or semi-autonomous, relying on a te
 This would occur due to regulatory constraints, safety concerns, and incomplete trust in onboard autonomy.
 
 As the number of involved drones increases, these control schemes would struggle to scale, facing manpower issues, and cognitive workload from inter-operator coordination.
-Digital Twin(DT) frameworks promise to ease these issues by aggregating state information, predicting behaviour, and supporting decision-making within a single interactive model.
+Digital Twin (DT) frameworks promise to ease these issues by aggregating state information, predicting behaviour, and supporting decision-making within a single interactive model.
 
-BEACON aims to explore how DT-inspired architectures and HCI principles can be combined to support a single operator supervising a co-ordinated swarm of autonomous drones, in an MSAR-like scenario.
+BEACON (Behavioral Engine for Autonomous Coordination in Ocean Navigation) aims to explore how DT-inspired architectures and HCI principles can be combined to support a single operator supervising a co-ordinated swarm of autonomous drones, in an MSAR-like scenario.
 
 \subsection{Problem Statement}\label{subsec:problem-statement}
 The central problem this project seeks to address is the challenge of effectively supervising an autonomous drone swarm in MSAR-like scenarios, while not incurring unacceptable cognitive workloads or losing situation awareness.
@@ -46,3 +46,10 @@ This would be implemented as a React/TypeScript simulation.
 That simulation needs to include a workload-aware supervisory interface, with a top-down mission map, a four-tier EICAS-style alert hierarchy, and HCI-grounded design principles.
 This would be followed up with an evaluation framework, with explicit rationale for metrics selection and exclusions.
 Finally, this would include an analysis of prior work on MSAR, Drone Swarms, HCI in Supervisory systems, and workload measurement, to challenge common assumptions and identify BEACON's scope and limitations.
+
+While not intended to directly replace current operational MSAR systems, BEACON seeks to inform their design.
+The expected impact is to ground BEACON's interface in Situational Awareness, workload theory, and HCI principles, and empirically evaluate the system's effectiveness in reducing operator workload and improving situational awareness, compared to traditional methods.
+
+BEACON's clear separation between the domain logic and its UI, in addition to its deterministic environment generation, and structured metrics collection, should make it a suitable testbed for future HCI implementations in Human-Drone Swarm Interfaces, Automation Transparency, and stress management.
+
+If integrated into a larger-scale research programme, BEACON could enable systematic, controlled testing of human-swarm MSAR interfaces before being deployed in costly real-world scenarios.
