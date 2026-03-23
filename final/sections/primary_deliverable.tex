@@ -79,3 +79,19 @@ The colors of the alerts follow standards for aviation alerting systems, with re
 The system also has a switchable theme selection, allowing users to shift between a light and a dark mode, depending on their preferences and the lighting conditions of their operational environment.
 These are defined using ``Theme Tokens'', which define the colors of each font, background, and accent color across the interface depending on the selected theme, to ensure a consistent visual identity across the interface.
 By default, the system starts in the preferred color scheme of the user's operating system, but users can choose to override this in the top right.
+
+\subsection{Evaluation Framework}\label{subsec:evaluation-framework}
+
+BEACON uses a combination of operational metrics and self-reported workload scores with NASA-TLX to evaluate the effectiveness of the system in improving situational awareness and reducing operator workload.
+
+Operational metrics include detection rate, time to first detection, search coverage, alerts per minute, comms uptime, and the amount of false positive or negatives.
+These metrics were chosen to reflect both the system's performance in MSAR tasks and to measure the workload on the operator, as factors like excessive alerts can increase cognitive load, while factors like search coverage and detection rate reflect the system's effectiveness in achieving its core mission.
+They were also easier to capture within the simulation, and similarly easier to analyze across different runs of the simulation, compared to more complex metrics like weighted situational awareness scores, which would be difficult to capture without real-world testing and human subject research.
+
+Additionally, BEACON prompts users to fill in an optional NASA-TLX questionnaire at the end of each mission to capture the user's perceived workload during the mission.
+NASA-TLX is a widely-used subjective workload assessment tool that measures perceived workload across six possible dimensions: Mental Demand, Physical Demand, Temporal Demand, Performance, Effort, and Frustration.
+It was chosen in this context due to its widespread adoption in similar contexts, like aviation and human-factors cognitive load research (\cite{COLLIGAN2015469})\@.
+The test is administered by prompting the user to rate each dimension on a scale from 0 to 100, then performing pairwise comparisons to determine which dimension is more important than the other, to calculate a weighted average workload score.
+Typically, higher NASA-TLX scores indicate higher perceived workload.
+
+This evaluation framework allows for a comprehensive assessment of BEACON in improving situational awareness and reducing operator workload, by combining objective performance metrics to approximate mission performance, and subjective workload assessments to capture the user's experience with the system.
