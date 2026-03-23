@@ -59,3 +59,23 @@ Packet drops and delays drive alert generation to influence situational awarenes
 
 Together, these models create realistic and controllable perturbations that allow the accurate replication of real-world MSAR challenges.
 
+\subsection{User Interface and Interaction Design}\label{subsec:user-interface-and-interaction-design}
+
+BEACON's simulation interface utilizes a single, stable frame.
+This frame defines the layout of the interface, with a modular ``children'' module that allows different components to be rendered within the frame, depending on the current route and user interactions.
+Within the main simulation page, the interface is divided into a central canvas area, which renders the mission map, with the drones, their paths, on-map anomalies, and other related information, and a bottom control panel that can be pulled up to access various controls and settings.
+
+Above the canvas, there is a metrics dashboard that provides real-time updates on key performance indicators, and a detection logging system recording the events of the mission, like detections, alerts, and other related information.
+Below it, is the Alerts panel, providing a searchable list of active and past alerts, each alert accompanied by a visual and audio component, categorized into four different alert categories as per the standards followed by most Aviation Crew Alerting Systems (\cite{RN3}).
+Each alert can be acknowledged individually or all at once, with acknowledged alerts taking on a more muted tone to indicate acknowledgment, while still being visible to maintain situational awareness.
+
+The map follows similar design standards to real-world interactive map applications like Google Maps, with some modifications to fit the specific needs of MSAR operations.
+The map is oriented with North at the top, with a strong line used to define the rectangular mission boundary, with a faint grid overlay to divide the map into a set of cells.
+The texture of the map is generated based on the sea state, with calmer seas having a smoother texture, and rougher seas having a more turbulent texture.
+At the center of the map is a ``Drone Hub'' from which users can choose to spawn drones at, if they don't opt to spawn the drones from the corners fo the map.
+
+The color palette of the interface is designed to meet WCAG 2.2 AA standards for contrast, with a focus on blues and teals to reflect the maritime domain, with bright accent colors used for alerts and important information to draw attention without overwhelming the user.
+The colors of the alerts follow standards for aviation alerting systems, with red for critical alerts, amber for warnings, blue for advisories, and green for system messages.
+The system also has a switchable theme selection, allowing users to shift between a light and a dark mode, depending on their preferences and the lighting conditions of their operational environment.
+These are defined using ``Theme Tokens'', which define the colors of each font, background, and accent color across the interface depending on the selected theme, to ensure a consistent visual identity across the interface.
+By default, the system starts in the preferred color scheme of the user's operating system, but users can choose to override this in the top right.
