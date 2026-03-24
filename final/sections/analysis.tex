@@ -1,2 +1,18 @@
 \section{Analysis}\label{sec:analysis}
 
+\subsection{Does the interface reduce workload?}\label{subsec:does-the-interface-reduce-workload}
+
+BEACON's design is grounded in the premise that autonomy and interface design can be evaluated through their impact on workload in addition to their impact on performance.
+Simulation and internal testing suggests that BEACON's design choice of shifting from low-level control to high-level tasking, combined with a structured alert system, and transparent coverage visualization helps reduce the need for continuous management.
+This aligns with studies like~\cite{CUMMINGS2007339} that suggest that well-designed decision aids and explainable autonomy can reduce operator workload by allowing them to focus on higher-level decision-making rather than micromanagement or debugging.
+
+However, this reduction in management does not necessarily translate into a reduction in workload, as studies like the above cited~\cite{CUMMINGS2007339} suggest that excessive, unexplained automation lead to operators reaching cognitive saturation faster.
+It also gives insight into the load-shedding strategies that operators may instinctively adopt, which can be mitigated by BEACON's design choice of making the swarm's behaviour more transparent and predictable.
+In addition, poorly tuned alert thresholds could produce peaks in alert burden, and overly dense map overlays could have the potential to increase cognitive load by making it difficult for operators to parse critical information from the interface.
+
+\subsection{NASA-TLX and Metric Design}\label{subsec:nasa-tlx-and-metric-design}
+
+In adopting NASA-TLX as the primary subjective workload assessment tool, the project does not assume that TLX scores are a perfect measure of workload.
+\cite{BABAEI2025103515} raises concerns about the clarity of NASA-TLX's construct of workload, and the validity of its use in interactive applications.
+To mitigate these concerns, BEACON's evaluation framework is designed to complement NASA-TLX scores with objective operational metrics, such as alert burden.
+The NASA-TLX scores should be interpreted with caution, and the evaluation should focus on trends and patterns in the data rather than absolute numbers.

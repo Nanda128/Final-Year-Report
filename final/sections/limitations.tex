@@ -1,0 +1,17 @@
+\section{Limitations}\label{sec:limitations}
+
+While BEACON's design and evaluation framework are grounded in existing research and best practices as much as possible, there are several limitations needing consideration.
+
+First, BEACON is locked into a simulation-only environment.
+No physical UAV/USV testing was conducted, and there is no real-time data link between physical drones and the simulation.
+This means that BEACON is best described as a Digital Model/Shadow, rather than a full Digital Twin.
+Due to this, environmental effects, drone kinematics, communications degradations, and other related factors are simplified, which limits the scope of the conclusions that can be drawn from BEACON\@.
+This trade-off was made to focus on HCI and interface design, which is the core contribution of this project, leaving physical testing for future work.
+
+Similarly, human subject testing was also left for future work, due to ethical and logistical concerns with the timeline of this project.
+Workload interpretations are based off of theory and informal self-use, rather than formally tested, controlled experiments with human subjects.
+This also means that the conclusions drawn from BEACON's evaluation framework are limited, and are not generalizable to real-world operators without further testing.
+
+The simulation also focuses on just searching rather than the full spectrum of MSAR operations, which include tasks like target extraction, first aid, and more.
+It also assumes perfect anomaly detection, and does not include coastal features, islands, or anomalies drifting with the current.
+These concerns were left for future work to focus on the core mechanics of drone supervision and interface design.
