@@ -22,7 +22,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             texlive-latex-recommended texlive-latex-extra texlive-bibtex-extra texlive-fonts-recommended \
-            texlive-science poppler-utils make perl texlive-publishers jq pandoc
+            texlive-science poppler-utils make perl texlive-publishers jq
 
       - name: Ensure build script is executable
         run: |
@@ -32,17 +32,6 @@ jobs:
         run: |
           set -euo pipefail
           bash src/scripts/build_report.sh final
-
-      - name: Convert LaTeX to DOCX (Pandoc)
-        run: |
-          set -euo pipefail
-          pandoc final/final_report.tex \
-            --from=latex \
-            --to=docx \
-            --citeproc \
-            --resource-path=final:final/sections:src/IEEEtran \
-            --reference-doc=src/IEEEtran/reference.docx \
-            --output=Final_FYP-DT-MSAR_23070854.docx
 
       - name: Ensure version script is executable
         run: |
@@ -91,7 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          ASSET_NAMES=("Final_FYP-DT-MSAR_23070854.pdf" "Final_FYP-DT-MSAR_23070854.docx")
+          ASSET_NAMES=("Final_FYP-DT-MSAR_23070854.pdf")
 
           echo "Looking up release for tag '${{ steps.get_tag.outputs.tag }}'..."
           RELEASE_JSON=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.get_tag.outputs.tag }}")
@@ -127,24 +116,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload DOCX to release (if release created)
-        if: steps.get_tag.outputs.tag != ''
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Final_FYP-DT-MSAR_23070854.docx
-          asset_name: Final_FYP-DT-MSAR_23070854.docx
-          asset_content_type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Upload generated report files
         uses: actions/upload-artifact@v4
         with:
           name: final-report-files
           path: |
             Final_FYP-DT-MSAR_23070854.pdf
-            Final_FYP-DT-MSAR_23070854.docx
 
       - name: Upload auxil and log artifacts
         uses: actions/upload-artifact@v4
