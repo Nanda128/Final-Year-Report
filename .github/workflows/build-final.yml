@@ -22,7 +22,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             texlive-latex-recommended texlive-latex-extra texlive-bibtex-extra texlive-fonts-recommended \
-            texlive-science poppler-utils make perl texlive-publishers jq
+            texlive-science poppler-utils make perl texlive-publishers jq pandoc
 
       - name: Ensure build script is executable
         run: |
@@ -33,26 +33,16 @@ jobs:
           set -euo pipefail
           bash src/scripts/build_report.sh final
 
-      - name: Install conversion tools (LibreOffice + python fallback)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libreoffice
-          python3 -m pip install --upgrade pip || true
-          python3 -m pip install pdf2docx || true
-
-      - name: Convert PDF -> DOCX (LibreOffice preferred, fallback to pdf2docx)
+      - name: Convert LaTeX to DOCX (Pandoc)
         run: |
           set -euo pipefail
-          OUTDIR=.
-          PDF=Final_FYP-DT-MSAR_23070854.pdf
-          DOCX=Final_FYP-DT-MSAR_23070854.docx
-          echo "Converting $PDF -> $DOCX"
-          if command -v libreoffice >/dev/null 2>&1; then
-            libreoffice --headless --convert-to docx --outdir "$OUTDIR" "$PDF" || true
-          fi
-          if [ ! -f "$OUTDIR/$DOCX" ]; then
-            python3 -c "from pdf2docx import Converter; conv=Converter('Final_FYP-DT-MSAR_23070854.pdf'); conv.convert('Final_FYP-DT-MSAR_23070854.docx'); conv.close()"
-          fi
+          pandoc final/final_report.tex \
+            --from=latex \
+            --to=docx \
+            --citeproc \
+            --resource-path=final:final/sections:src/IEEEtran \
+            --reference-doc=src/IEEEtran/reference.docx \
+            --output=Final_FYP-DT-MSAR_23070854.docx
 
       - name: Ensure version script is executable
         run: |
@@ -95,13 +85,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Delete existing PDF asset from release (if present)
+      - name: Delete existing release assets from release (if present)
         if: steps.get_tag.outputs.tag != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          ASSET_NAME="Final_FYP-DT-MSAR_23070854.pdf"
+          ASSET_NAMES=("Final_FYP-DT-MSAR_23070854.pdf" "Final_FYP-DT-MSAR_23070854.docx")
 
           echo "Looking up release for tag '${{ steps.get_tag.outputs.tag }}'..."
           RELEASE_JSON=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.get_tag.outputs.tag }}")
@@ -112,16 +102,19 @@ jobs:
             exit 0
           fi
 
-          echo "Found release id: $RELEASE_ID. Checking assets for existing PDF..."
-          ASSET_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets" | jq -r '.[] | select(.name=="'"$ASSET_NAME"'") | .id')
+          echo "Found release id: $RELEASE_ID. Checking assets for existing files..."
+          RELEASE_ASSETS_JSON=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets")
 
-          if [ -n "$ASSET_ID" ] && [ "$ASSET_ID" != "null" ]; then
-            echo "Deleting existing asset id $ASSET_ID (name: $ASSET_NAME)"
-            curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/releases/assets/$ASSET_ID"
-            echo "Deleted asset $ASSET_ID."
-          else
-            echo "No existing asset named '$ASSET_NAME' found in release $RELEASE_ID."
-          fi
+          for ASSET_NAME in "${ASSET_NAMES[@]}"; do
+            ASSET_ID=$(echo "$RELEASE_ASSETS_JSON" | jq -r '.[] | select(.name=="'"$ASSET_NAME"'") | .id')
+            if [ -n "$ASSET_ID" ] && [ "$ASSET_ID" != "null" ]; then
+              echo "Deleting existing asset id $ASSET_ID (name: $ASSET_NAME)"
+              curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/releases/assets/$ASSET_ID"
+              echo "Deleted asset $ASSET_ID."
+            else
+              echo "No existing asset named '$ASSET_NAME' found in release $RELEASE_ID."
+            fi
+          done
 
       - name: Upload PDF to release (if release created)
         if: steps.get_tag.outputs.tag != ''
@@ -145,18 +138,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload generated PDF
+      - name: Upload generated report files
         uses: actions/upload-artifact@v4
         with:
-          name: final-pdf
+          name: final-report-files
           path: |
             Final_FYP-DT-MSAR_23070854.pdf
-
-      - name: Upload generated DOCX
-        uses: actions/upload-artifact@v4
-        with:
-          name: final-docx
-          path: |
             Final_FYP-DT-MSAR_23070854.docx
 
       - name: Upload auxil and log artifacts
@@ -166,4 +153,3 @@ jobs:
           path: |
             auxil
             src/scripts/log
-
