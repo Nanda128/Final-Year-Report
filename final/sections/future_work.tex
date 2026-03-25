@@ -1,0 +1,21 @@
+\section{Future Work}\label{sec:future-work}
+
+From our analysis and limitations, we've identified two main avenues for future work.
+
+First, real-world testing with human operators is crucial to properly validating BEACON's design and evaluation framework.
+If possible, this testing should be conducted in a controlled environment, with trained operators (ideally, MSAR professionals) supervising a physical drone swarm through BEACON\@ under various pre-defined scenarios.
+Preferably, this testing should also include A/B testing against different interface designs, and autonomy levels.
+NASA-TLX should be administered alongside measurements of alert burden, amount of manual interventions per minute, detected anomaly count, and other related metrics, to evaluate the impact of BEACON's design on workload and performance.
+This work, while beyond the scope of this project, is essential to validating BEACON's design and evaluation framework.
+
+Second, BEACON needs to be connected to a real-time data link with physical drones, and tested in real-world environments.
+In a controlled trial, BEACON could be connected to a small swarm of drones, and tested in a controlled environment.
+This would cause BEACON to move from a Digital Model/Shadow to a full Digital Twin.
+BEACON's design and evaluation framework would need to be adapted to account for the increased complexity and unpredictability of real-world environments, as well as the physical limitations of drones.
+It's design might also warrant looking into other methods of path planning and swarm coordination, such as reinforcement learning-based approaches.
+
+Integrating drones into BEACON would also facilitate integration with real-world regulatory and safety frameworks (like geofencing drones against flying over certain areas/people, EASA regulations).
+This would also require addressing communication reliability, onboard compute limits, and failsafe mechanisms.
+
+Additional directions for future work include exploring adaptive interfaces that can adjust to the operator's estimated workload, investigating alternative or complementary workload assessment tools to NASA-TLX\@.
+This change would also motivate evaluating more sophisticated but explainable swarm coordination algorithms.

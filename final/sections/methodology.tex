@@ -1,11 +1,11 @@
 \section{Methodology}\label{sec:methodology}
 
 The project adopts a design-science and User-Centered Design approach.
-Design-science research focuses on building and evaluating artefacts that solve identified problems, while User-Centered Design (UCD) emphasizes grounded design decisions in user needs and preferences.
+Design-science research focuses on building and evaluating artefacts that solve identified problems, while User-Centred Design (UCD) emphasises grounded design decisions in user needs and preferences.
 
 BEACON was developed iteratively, by defining a set of ``Issues'', each with specific ``Acceptance Criteria''.
 Each issue constitutes a feature or improvement to be implemented in the project.
-For example, Alerts were implemented as a feature, with the acceptance criteria noting the need for finding a standard to prioritize and display alerts, and the need for a visual and audio component to the alert system.
+For example, Alerts were implemented as a feature, with the acceptance criteria noting the need for finding a standard to prioritise and display alerts, and the need for a visual and audio component to the alert system.
 
 
 \subsection{Objectives and Hypotheses}\label{subsec:objectives-and-hypotheses}
@@ -15,7 +15,7 @@ To tie BEACON's design and evaluation to specific, verifiable hypotheses, we def
 \begin{itemize}
     \item How effectively does BEACON's interface design improve situational awareness?
     \item To what extent does BEACON's interface design reduce operator workload, within acceptable limits for MSAR operations?
-    \item How much does BEACON's interface optimizations to improve situational awareness improve mission success?
+    \item How much do BEACON's interface optimisations to improve situational awareness improve mission success?
 \end{itemize}
 
 From these, we can derive the following hypotheses:
@@ -33,7 +33,7 @@ These research questions and hypotheses will provide the basis for the design an
 BEACON was developed in React and TypeScript.
 The map was rendered using a Canvas-based element, on which the drones, their paths, anomalies, and the mission boundary were drawn.
 
-The architecture of the system emphasizes domain purity, implementing clear separations between different, modular components of a larger system.
+The architecture of the system emphasises domain purity, implementing clear separations between different, modular components of a larger system.
 Logic like the environment generator, swarm behaviour, coverage planning, alerts, metrics collection, and more, were implemented as separate modules, hooking into a central \textit{MissionControl.tsx} context provider.
 
 The main simulation loop runs in \textit{SimulationPage.tsx}, which uses the built-in \textit{requestAnimationFrame} function to update the state of the system at a fixed interval, to update drone kinematics, battery states, compute swarm adjustments, calculate per-drone communications, update sensor readings, and other related functions.
