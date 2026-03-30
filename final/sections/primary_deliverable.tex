@@ -27,6 +27,13 @@ Alternatively, users can also import and export their performance data as JSON f
 
 These JSONs would then be analysed to determine insights about the system's performance, and possible improvements for the MSAR operations team.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{beacon_flowchart}
+    \caption{A flowchart showing a User's mission flow.}
+    \label{fig:beacon_flowchart}
+\end{figure}
+
 \subsection{Environment and Scenario Modelling}\label{subsec:environment-and-scenario-modelling}
 
 The environment generator creates a bounded rectangular mission space with a configurable width and height.
@@ -45,9 +52,23 @@ This is intended to avoid situations where some drones have open capacity while 
 The search area is partitioned into a variety of polygonal ``cells'', each having an area directly proportional to the drone's speed.
 This gives each drone an implicit ``territory'' to search.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{voronoi_cells}
+    \caption{A screenshot of BEACON's simulation page, showing the division of the map into 5 Voronoi cells, with the cell for Drone 1 highlighted in blue.}
+    \label{fig:voronoi_cells}
+\end{figure}
+
 For each cell, a set of waypoints is generated using a Boustrophedon (Lawnmower) path planning algorithm (\cite{10.1007/978-1-4471-1273-0_32}), to ensure systematic coverage.
 This approach provides a predictable and explainable search pattern, despite being less adaptable than more complex reinforcement learning-based approaches like EN-MASCA (\cite{ENMASCA2025})\@.
 These paths are then rendered via canvas layers, and the drones are given a set of waypoints to follow sequentially, before returning to the Drone Hub in the centre of the map.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{voronoi_cells}
+    \caption{A screenshot of BEACON's simulation canvas, showing the map, divided into 5 Voronoi cells, with Boustrophedon paths drawn on the map. Highlighted is the path for DR-01, with each Blue Dot representing a waypoint for the drone.}
+    \label{fig:lawnmower_path}
+\end{figure}
 
 The communications model seeks to simulate the effects of communication degradation on the drone swarm, by introducing configurable communication ranges, and a probabilistic model of communication failure based on distance and environmental effects.
 Packet loss can occur based on the drone's distance from the Drone Hub, as well as the predefined sea state, and other factors defined in the scenario configuration.
@@ -96,5 +117,40 @@ NASA-TLX is a widely-used subjective workload assessment tool that measures perc
 It was chosen in this context due to its widespread adoption in similar contexts, like aviation and human-factors cognitive load research (\cite{COLLIGAN2015469})\@.
 The test is administered by prompting the user to rate each dimension on a scale from 0 to 100, then performing pairwise comparisons to determine which dimension is more important than the other, to calculate a weighted average workload score.
 Typically, higher NASA-TLX scores indicate higher perceived workload.
+
+At the end of a given mission, the user is presented with the Detection Rate, Duration of the mission, and the number of Alerts per minute, as well as a prompt to fill in the NASA-TLX questionnaire.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{mission_end}
+    \caption{A screenshot of BEACON's mission end screen, showing detection rate, duration, and alerts per minute.}
+    \label{fig:mission_end}
+\end{figure}
+
+They can then fill out the NASA-TLX questionnaire, implemented as a series of sliders for each dimension, followed by a pairwise comparison to determine the weight of each dimension to the overall workload score.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{nasa_tlx_workload_rating}
+    \caption{A screenshot of BEACON's NASA-TLX workload rating screen post-mission.}
+    \label{fig:nasa_tlx_workload_rating}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{nasa_tlx_pairwise_comparison}
+    \caption{A screenshot of a section of BEACON's NASA-TLX pairwise comparison.}
+    \label{fig:nasa_tlx_pairwise_comparison}
+\end{figure}
+
+After filling in the NASA-TLX questionnaire, or skipping it, the user is then navigated to a debrief page which presents the user with their weighted NASA-TLX score and a summary of performance metrics, including detection rate, time to first detection, search coverage, alerts per minute, comms uptime, and the amount of false contacts.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{mission_debrief}
+    \caption{A screenshot of BEACON's Debrief section.}
+    \label{fig:mission_debrief}
+\end{figure}
+
 
 This evaluation framework allows for a comprehensive assessment of BEACON in improving situational awareness and reducing operator workload, by combining objective performance metrics to approximate mission performance, and subjective workload assessments to capture the user's experience with the system.
