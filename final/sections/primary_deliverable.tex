@@ -2,7 +2,7 @@
 
 \subsection{BEACON System Overview}\label{subsec:beacon-system-overview}
 
-BEACON's five-page flow from Landing, to Setup, Simulation, NASA-TLX, and Debrief, reflects the typical lifecycle of an MSAR operation.
+BEACON's five-page flow from Landing, to Setup, Simulation, National Aeronautics and Space Administration Task Load Index (NASA-TLX), and Debrief, reflects the typical lifecycle of a maritime search and rescue (MSAR) operation.
 
 The Landing page provides an introduction to the system, and introduces scenario presets, including a tutorial.
 The user can then choose to proceed to the Setup page, or to a dedicated Management page.
@@ -72,7 +72,7 @@ These paths are then rendered via canvas layers, and the drones are given a set 
 
 The communications model seeks to simulate the effects of communication degradation on the drone swarm, by introducing configurable communication ranges, and a probabilistic model of communication failure based on distance and environmental effects.
 Packet loss can occur based on the drone's distance from the Drone Hub, as well as the predefined sea state, and other factors defined in the scenario configuration.
-By default, the system uses information based off of~\cite{s21082848}, assuming the drones are operating in a 4G LTE network.
+By default, the system uses information based off of~\cite{s21082848}, assuming the drones are operating in a fourth-generation long-term evolution (4G LTE) network.
 
 The delay can get larger and larger as the conditions get worse, until a point where the drone is effectively disconnected from the Drone Hub, and must rely on its last known instructions and local decision-making to continue its mission.
 Any detections made while disconnected get stored in the drone's local memory as a ``buffer'' of queued messages, which are then sent to the Drone Hub all at once when the drone reconnects.
@@ -95,7 +95,7 @@ The map is oriented with North at the top, with a strong line used to define the
 The texture of the map is generated based on the sea state, with calmer seas having a smoother texture, and rougher seas having a more turbulent texture.
 At the centre of the map is a ``Drone Hub'' from which users can choose to spawn drones at, if they don't opt to spawn the drones from the corners fo the map.
 
-The colour palette of the interface is designed to meet WCAG 2.2 AA standards for contrast, with a focus on blues and teals to reflect the maritime domain, with bright accent colours used for alerts and important information to draw attention without overwhelming the user.
+The colour palette of the interface is designed to meet Web Content Accessibility Guidelines (WCAG) 2.2 AA standards for contrast, with a focus on blues and teals to reflect the maritime domain, with bright accent colours used for alerts and important information to draw attention without overwhelming the user.
 The colours of the alerts follow standards for aviation alerting systems, with red for critical alerts, amber for warnings, blue for advisories, and green for system messages.
 The system also has a switchable theme selection, allowing users to shift between a light and a dark mode, depending on their preferences and the lighting conditions of their operational environment.
 These are defined using ``Theme Tokens'', which define the colours of each font, background, and accent colour across the interface depending on the selected theme, to ensure a consistent visual identity across the interface.

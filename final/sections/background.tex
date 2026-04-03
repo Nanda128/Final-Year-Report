@@ -3,11 +3,11 @@
 \subsection{Unmanned Vehicles in Search and Rescue}\label{subsec:unmanned-vehicles-in-search-and-rescue}
 
 Unmanned vehicles have long been used as force multipliers in SAR situations.
-\cite{waharte2010supporting} shows that autonomous use of UAVs could significantly enhance terrestrial SAR through structured search strategies, reducing expected detection times compared to random search.
+\cite{waharte2010supporting} shows that autonomous use of unmanned aerial vehicles (UAVs) could significantly enhance terrestrial SAR through structured search strategies, reducing expected detection times compared to random search.
 In the maritime domain, recent SAR frameworks (\cite{messmer2024uavassistedmaritimesearchrescue}) for UAV-assisted MSAR have proposed software architectures that combine onboard UAV detection with more advanced ground-station processing.
 
 \cite{7761074} demonstrated a co-operative multi-robot team for surveilling shipwreck survivors at sea, in collaboration with the Portuguese Navy, at an undeclared location.
-While the paper offered promising results for the application of UAVs/USVs in Maritime Search and Rescue, many such deployments retain strong human involvement at the control level.
+While the paper offered promising results for the application of UAVs and unmanned surface vessels (USVs) in Maritime Search and Rescue, many such deployments retain strong human involvement at the control level.
 In the case of this paper, a UAV takes off from the USV, ascends to a given height, and then pings a USV with the location of anything it suspects to be a person at sea.
 The USV then moves to the target, and takes a picture of it, which is then sent with the target's location to a human operator for verification.
 
@@ -35,7 +35,7 @@ Across these approaches, the most primary motivators appear to be collision avoi
 Operators over open ocean may not need to worry about terrain, but care must be given to avoid obstacles like ships, waves, and other drones.
 
 BEACON has opted for a geometric, explainable method.
-We have chosen to combine a weighted Voronoi Tessellation approach to generate ``cells'' on the map, which are assigned to drones based on their position, and their speed, in such a manner that every drone completes their task at roughly the same time.
+This project combines a weighted Voronoi Tessellation approach to generate ``cells'' on the map, which are assigned to drones based on their position, and their speed, in such a manner that every drone completes their task at roughly the same time.
 Within these cells, drones are given a set of waypoints to follow, which are generated using the ``Boustrophedon`` (Also known as the Lawnmower) path planning algorithm.
 While this approach is less adaptable than EN-MASCA-style systems in other scenarios, their behaviour is easy for operators to understand and predict, a critical factor in time-critical Maritime Search and Rescue operations.
 
@@ -43,7 +43,7 @@ While this approach is less adaptable than EN-MASCA-style systems in other scena
 Digital Twins are commonly described as digital representations of physical assets or processes that remain synchronised with its real-world counterpart.
 These are, notably, different from Digital Models (no data link), Digital Shadows (one-way physical-to-digital data link).
 
-DTs can reduce cognitive workload by abstracting away low-level details, outsourcing tasks like aggregating different sensor streams/assorted metrics, enable predictive analysis, and supporting decision-making tools like path planners and alert systems.
+Digital Twins (DTs) can reduce cognitive workload by abstracting away low-level details, outsourcing tasks like aggregating different sensor streams/assorted metrics, enable predictive analysis, and supporting decision-making tools like path planners and alert systems.
 These tools can then act consistently and transparently on behalf of the human supervisor.
 In maritime applications, DTs have been used to optimise ship routes, monitor vessel health via operational metrics, with a focus on engineering and maintenance applications~\cite{DT_maritime_applications}.
 
@@ -54,12 +54,12 @@ Being explicit about this scoping decision is important, to avoid conflating sim
 
 \subsection{HCI in Supervisory Control Systems}\label{subsec:supervisory-hci}
 
-HCI research for supervisory control systems focuses on designing interfaces for human operators who oversee and manage autonomous systems.
+Human-computer interaction (HCI) research for supervisory control systems focuses on designing interfaces for human operators who oversee and manage autonomous systems.
 \cite{AUTOMATIONEFFECTONUAVROUTING} found that excessively automated, simplistic displays can inadvertently increase operator workload by making debugging difficult, reducing situational awareness, and encouraging automation bias.
 \cite{CUMMINGS2007339} found that operators supervising multiple UAVs, while experiencing high workload, would adopt load-shedding strategies, where they compartmentalise their attention to a small set of drones.
 
 BEACON's interface combines an emphasis on revealing structure with constraints from research on supervisory control that warn against overly-complex global views of the system.
-The mission map and coverage overlays act as configurable displays of our spatial constraints, like the mission boundary, Voronoi cells, and drone paths, while alerts and on-map notifications provide localised information.
+The mission map and coverage overlays act as configurable displays of the system's spatial constraints, like the mission boundary, Voronoi cells, and drone paths, while alerts and on-map notifications provide localised information.
 The layout's design would be guided by various display design principles, like the Proximity Compatibility Principle.
 
 \subsection{Workload Measurement and NASA-TLX}\label{subsec:workload-measurement-and-nasa-tlx}
