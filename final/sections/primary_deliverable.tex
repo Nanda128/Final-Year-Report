@@ -2,20 +2,41 @@
 
 \subsection{BEACON System Overview}\label{subsec:beacon-system-overview}
 
-BEACON's five-page flow from Landing, to Setup, Simulation, National Aeronautics and Space Administration Task Load Index (NASA-TLX), and Debrief, reflects the typical lifecycle of a maritime search and rescue (MSAR) operation.
+BEACON's five-page flow from Landing, to Setup, Simulation, NASA-TLX, and Debrief, reflects the typical lifecycle of a maritime search and rescue (MSAR) operation.
 
 The Landing page provides an introduction to the system, and introduces scenario presets, including a tutorial.
 The user can then choose to proceed to the Setup page, or to a dedicated Management page.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{beacon_landing_page}
+    \caption{A screenshot of a section of BEACON's landing page.}
+    \label{fig:beacon_landing_page}
+\end{figure}
 
 The Setup page allows users to choose the number of drones, the mission boundary, and the scenario seed.
 Here, they can also list the amount of anomalies on the map, such as people in the water, lifeboats, or debris.
 They can also tweak sensor settings here.
 This page is intended to act as the planning stage and supports experimentation with different mission parameters.
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{beacon_setup_page}
+    \caption{A screenshot of a section of BEACON's setup page.}
+    \label{fig:beacon_setup_page}
+\end{figure}
+
 After setup, the user can then navigate to the Simulation page, which is the core of the system.
 This page runs the real-time simulation of the drone swarm across the map, presenting the canvas, alerts, metrics, and mission controls.
 The user can pull up a control panel from the bottom of their screen to access controls like drone commands, search pattern generation, and more.
 Here, they can also enable administrative tools like enabling or disabling Fog-of-War, which hides anomalies until they have been detected by a drone, or enabling comms degradation simulation.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{beacon_simulation_page}
+    \caption{A screenshot of a section of BEACON's simulation page.}
+    \label{fig:beacon_simulation_page}
+\end{figure}
 
 The user can then end the mission to navigate to a page that prompts the user to fill in an optional NASA-TLX questionnaire, to capture their perceived workload during the mission.
 Choosing to fill in the questionnaire then leads to the dedicated NASA-TLX page, after which the user is navigated to a debrief page which presents the user with their weighted NASA-TLX score and a summary of performance metrics.
@@ -26,6 +47,13 @@ Missions completed on the same session and browser are stored in the browser's l
 Alternatively, users can also import and export their performance data as JSON files.
 
 These JSONs would then be analysed to determine insights about the system's performance, and possible improvements for the MSAR operations team.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth]{beacon_management_page}
+    \caption{A screenshot of a section of BEACON's management page after fourteen test missions.}
+    \label{fig:beacon_management_page}
+\end{figure}
 
 \begin{figure}[htbp]
     \centering
@@ -82,27 +110,24 @@ Together, these models create realistic and controllable perturbations that allo
 
 \subsection{User Interface and Interaction Design}\label{subsec:user-interface-and-interaction-design}
 
-BEACON's simulation interface utilises a single, stable frame.
-This frame defines the layout of the interface, with a modular ``children'' module that allows different components to be rendered within the frame, depending on the current route and user interactions.
-Within the main simulation page, the interface is divided into a central canvas area, which renders the mission map, with the drones, their paths, on-map anomalies, and other related information, and a bottom control panel that can be pulled up to access various controls and settings.
+BEACON's simulation interface utilises a single, stable frame with a modular ``children'' module for route-specific content.
+This allows an extensible interface architecture, and simple comparisons between different interface designs, while keeping the same underlying scenarios and mechanics.
 
-Above the canvas, there is a metrics dashboard that provides real-time updates on key performance indicators, and a detection logging system recording the events of the mission, like detections, alerts, and other related information.
-Below it, is the Alerts panel, providing a searchable list of active and past alerts, each alert accompanied by a visual and audio component, categorised into four different alert categories as per the standards followed by most Aviation Crew Alerting Systems (\cite{RN3}).
-Each alert can be acknowledged individually or all at once, with acknowledged alerts taking on a more muted tone to indicate acknowledgment, while still being visible to maintain situational awareness.
+Within the simulation page, information is separated into a metrics dashboard, a central Map, an Alerts panel, an environmental details box, and a pull-up control panel.
+This separation follows the Proximity Compatibility Principle (\cite{doi:10.1518/001872095779049408}), grouping related information and actions together so operators can parse mission state quickly under time pressure.
 
-The map follows similar design standards to real-world interactive map applications like Google Maps, with some modifications to fit the specific needs of MSAR operations.
-The map is oriented with North at the top, with a strong line used to define the rectangular mission boundary, with a faint grid overlay to divide the map into a set of cells.
-The texture of the map is generated based on the sea state, with calmer seas having a smoother texture, and rougher seas having a more turbulent texture.
-At the centre of the map is a ``Drone Hub'' from which users can choose to spawn drones at, if they don't opt to spawn the drones from the corners fo the map.
+To manage cognitive overload from alerts, the Alerts panel includes a searchable alert log.
+Each alert is categorised with aviation crew alerting conventions (\cite{RN3}), with the option to acknowledge alerts individually or in bulk, which mutes the alert but keeps it visible in the log.
+Each alert is also accompanied by an audio cue, with different sounds for different alert levels.
+These mechanics were added to support triage and alert prioritisation without hiding historical context, helping preserve situational awareness when alert volume increases.
+Having access to the alert log also allows operators to review past alerts which could make debugging future related alerts easier.
 
-The colour palette of the interface is designed to meet Web Content Accessibility Guidelines (WCAG) 2.2 AA standards for contrast, with a focus on blues and teals to reflect the maritime domain, with bright accent colours used for alerts and important information to draw attention without overwhelming the user.
-The colours of the alerts follow standards for aviation alerting systems, with red for critical alerts, amber for warnings, blue for advisories, and green for system messages.
-The system also has a switchable theme selection, allowing users to shift between a light and a dark mode, depending on their preferences and the lighting conditions of their operational environment.
-These are defined using ``Theme Tokens'', which define the colours of each font, background, and accent colour across the interface depending on the selected theme, to ensure a consistent visual identity across the interface.
-By default, the system starts in the preferred colour scheme of the user's operating system, but users can choose to override this in the top right.
+The map uses familiar interaction conventions (north-up orientation, clear mission boundary, and light grid partitioning) and communicates mission-state cues such as sea-state texture to reflect environmental state.
+Combined with predictable swarm-path rendering from the coverage-planning model, these features were added to lower effort spent interpreting the User Interface and to reduce the mental overhead required to understand the locations of drones, anomalies, and their current states.
 
-The interface follows the Proximity Compatibility Principle (\cite{doi:10.1518/001872095779049408}) as a guiding principle for the layout of information and buttons, grouping related information together, and separating unrelated information to reduce cognitive load and improve situational awareness.
-This is reflected in the separation of the simulation page into the metrics dashboard, the central canvas, and the alerts panel, each with a clear purpose and layout to support the user's needs during an MSAR operation.
+The visual language was also designed to reduce perceptual overload.
+WCAG 2.2 AA contrast targets, aviation-style alert colours (critical red, warning amber, advisory blue, system green), and light/dark modes were added so high-priority information remains salient without saturating the display or sinking into other details.
+In addition, simulation controls such as Fog-of-War and communication-degradation toggles were included so workload-relevant complexity could be deliberately introduced during mission runs.
 
 \subsection{Evaluation Framework}\label{subsec:evaluation-framework}
 
@@ -112,7 +137,7 @@ Operational metrics include detection rate, time to first detection, search cove
 These metrics were chosen to reflect both the system's performance in MSAR tasks and to measure the workload on the operator, as factors like excessive alerts can increase cognitive load, while factors like search coverage and detection rate reflect the system's effectiveness in achieving its core mission.
 They were also easier to capture within the simulation, and similarly easier to analyse across different runs of the simulation, compared to more complex metrics like weighted situational awareness scores, which would be difficult to capture without real-world testing and human subject research.
 
-Additionally, BEACON prompts users to fill in an optional NASA-TLX questionnaire at the end of each mission to capture the user's perceived workload during the mission.
+Additionally, BEACON prompts users to fill in a NASA-TLX questionnaire at the end of each mission to capture the user's perceived workload during the mission.
 NASA-TLX is a widely-used subjective workload assessment tool that measures perceived workload across six possible dimensions: Mental Demand, Physical Demand, Temporal Demand, Performance, Effort, and Frustration.
 It was chosen in this context due to its widespread adoption in similar contexts, like aviation and human-factors cognitive load research (\cite{COLLIGAN2015469})\@.
 The test is administered by prompting the user to rate each dimension on a scale from 0 to 100, then performing pairwise comparisons to determine which dimension is more important than the other, to calculate a weighted average workload score.

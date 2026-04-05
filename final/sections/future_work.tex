@@ -5,8 +5,11 @@ From the analysis and limitations, two main avenues for future work were identif
 First, real-world testing with human operators is crucial to properly validating BEACON's design and evaluation framework.
 If possible, this testing should be conducted in a controlled environment, with trained operators (ideally, maritime search and rescue (MSAR) professionals) supervising a physical drone swarm through BEACON\@ under various pre-defined scenarios.
 Preferably, this testing should also include A/B testing against different interface designs, and autonomy levels.
-National Aeronautics and Space Administration Task Load Index (NASA-TLX) should be administered alongside measurements of alert burden, amount of manual interventions per minute, detected anomaly count, and other related metrics, to evaluate the impact of BEACON's design on workload and performance in a way that captures both perceived strain and mission outcomes.
-This work, while beyond the scope of this project, is essential to validating BEACON's design and evaluation framework.
+A/B testing would be essential since it fits neatly within BEACON's layered architecture, and allowing a direct comparison of design choices that could not be compared in this simulation-only project.
+For example, algorithms like EN-MASCA (\cite{ENMASCA2025}) could be effectively tested against BEACON's current path-planning approach, and a more traditional interface design could be tested against BEACON's aviation-inspired design.
+
+NASA-TLX should be administered alongside measurements of alert burden, amount of manual interventions per minute, detected anomaly count, and other related metrics, to evaluate the impact of BEACON's design on workload and performance in a way that captures both perceived strain and mission outcomes.
+While this work is beyond the scope of this project, it is essential to validate BEACON's design and evaluation framework.
 
 Second, BEACON needs to be connected to a real-time data link with physical drones, and tested in real-world environments.
 In a controlled trial, BEACON could be connected to a small swarm of drones, and tested in a controlled environment.

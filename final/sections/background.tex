@@ -8,11 +8,10 @@ In the maritime domain, recent SAR frameworks (\cite{messmer2024uavassistedmarit
 
 \cite{7761074} demonstrated a co-operative multi-robot team for surveilling shipwreck survivors at sea, in collaboration with the Portuguese Navy, at an undeclared location.
 While the paper offered promising results for the application of UAVs and unmanned surface vessels (USVs) in Maritime Search and Rescue, many such deployments retain strong human involvement at the control level.
-In the case of this paper, a UAV takes off from the USV, ascends to a given height, and then pings a USV with the location of anything it suspects to be a person at sea.
+In the experiment, a UAV takes off from the USV, ascends to a given height, and then pings a USV with the location of anything it suspects to be a person at sea.
 The USV then moves to the target, and takes a picture of it, which is then sent with the target's location to a human operator for verification.
 
 While this system is effective, it relies on a human operator, or a team of operators, to manage the drones in small groups.
-This can be due to regulatory constraints, safety concerns, and incomplete foundations for trust in onboard autonomy.
 
 This reliance on manual control helps to explain why many implementations of UAVs in MSAR do not use entirely autonomous solutions.
 Factors like safety, certification, and legal accountability inherently favour conservative, operator-centric control approaches.
@@ -34,10 +33,24 @@ A consensus-based approach tackles robustness to communication issues by allowin
 Across these approaches, the most primary motivators appear to be collision avoidance and maximising search coverage.
 Operators over open ocean may not need to worry about terrain, but care must be given to avoid obstacles like ships, waves, and other drones.
 
-BEACON has opted for a geometric, explainable method.
-This project combines a weighted Voronoi Tessellation approach to generate ``cells'' on the map, which are assigned to drones based on their position, and their speed, in such a manner that every drone completes their task at roughly the same time.
-Within these cells, drones are given a set of waypoints to follow, which are generated using the ``Boustrophedon`` (Also known as the Lawnmower) path planning algorithm.
-While this approach is less adaptable than EN-MASCA-style systems in other scenarios, their behaviour is easy for operators to understand and predict, a critical factor in time-critical Maritime Search and Rescue operations.
+The Swarm Coordination method chosen was based on a set of criteria, which were informed by the project's goals of explainability, operator workload reduction, and practical constraints.
+The criteria are as follows:
+
+\begin{itemize}
+    \item Operator Interpretability under time pressure
+    \item Low computational overhead for near-real-time replanning
+    \item Resilience to intermittent communications
+    \item Balanced area coverage across heterogeneous drones
+\end{itemize}
+
+Several alternatives were considered.
+EN-MASCA-style reinforcement learning-based approaches were discounted for this project phase since they require substantial training data, tuning effort, and additional validation to ensure its behaviour remains predictable for operators in safety-critical scenarios.
+Pure consensus-based coordination algorithms like SwarmRaft (\cite{Dev_2026}) were also considered, but were discounted as the primary planner because, while robust to communication loss, it does not directly provide explicit spatial partitioning and workload balancing in a way that could be immediately visible in the interface.
+
+Based on these constraints, BEACON adopted a geometric, explainable method.
+The implemented solution combines weighted Voronoi tessellation to generate map ``cells'' assigned by drone position and speed (to encourage similar completion times), with Boustrophedon (lawnmower) waypoint generation inside each cell.
+This design is less adaptive than learned policies in highly dynamic settings, but its behaviour is transparent and auditable, which better matches the human-supervisory and workload goals of BEACON\@.
+The implementation of other coordination methods, while still possible, has been left for future work, due to the simulation-only scope of this project.
 
 \subsection{Digital Twins}\label{subsec:digital-twins}
 Digital Twins are commonly described as digital representations of physical assets or processes that remain synchronised with its real-world counterpart.
@@ -64,7 +77,14 @@ The layout's design would be guided by various display design principles, like t
 
 \subsection{Workload Measurement and NASA-TLX}\label{subsec:workload-measurement-and-nasa-tlx}
 
-NASA-TLX (Task Load Index) is a widely-used subjective workload assessment tool that measures perceived workload across a set of dimensions:
+A vital requirement for BEACON was a method to evaluate operator workload, to ensure that the system's design effectively reduces cognitive load while maintaining situational awareness.
+The strategy for selecting a workload measurement was defined by ensuring suitability for repeated simulation trials, comparability with prior supervisory-control literature, relevance to the specific types of pressure common MSAR-like tasks (like cognitive, or temporal demand), and ease of administration.
+
+Alternative strategies were considered, such as relying only on objective operational metrics (for example, intervention count and alert burden).
+These strategies were not chosen as the primary method because objective metrics alone do not fully capture perceived strain.
+
+Based on this selection process, NASA-TLX (Task Load Index) was adopted as the primary subjective workload measurement instrument.
+It measures perceived workload across a set of dimensions:
 
 \begin{itemize}
     \item Mental Demand - How mentally demanding was the task?
@@ -80,6 +100,6 @@ Each dimension is rated on a scale from 0 to 100, and then weighted based on pai
 Recent reviews of NASA-TLX, however, have raised concerns about NASA-TLX's conceptual clarity, and its validity in interactive applications.
 Systematic analyses of NASA-TLX have found that many studies use it without clearly defining workload, and apply inconsistent weightings, leading to difficulties in reproducing and comparing the results.
 
-BEACON chooses to adopt NASA-TLX despite these caveats due to its widespread use and acceptance in human workload assessment, its clean mapping to MSAR-like supervision, where mental and temporal demand, effort and frustration are particularly important.
+BEACON adopts NASA-TLX despite these caveats due to its widespread use and acceptance in human workload assessment, and its clean mapping to MSAR-like supervision, where mental and temporal demand, effort, and frustration are particularly important.
 It is also practical for repeated use in simulation, and can be easily implemented.
 At the same time, TLX scores are interpreted cautiously and are always complemented with objective operational metrics like alert burden, and intervention rate, in line with the recommendations given by~\cite{BABAEI2025103515}.

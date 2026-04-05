@@ -31,22 +31,24 @@ This is directly relevant because the project's core objective is to reduce oper
 \subsection{Problem Statement}\label{subsec:problem-statement}
 The central problem this project seeks to address is the challenge of effectively supervising an autonomous drone swarm in MSAR-like scenarios, while not incurring unacceptable cognitive workloads or losing situation awareness.
 
-This central problem can be broken down into the following sub-problems:
+This central problem is addressed through three design priorities:
 
 \begin{itemize}
-    \item How can a simulation and C3I (Command, Control, Communications, and Intelligence) framework be designed to capture key MSAR constraints in a way that can evolve into a complete Digital Twin system?
-    \item How can an interface be designed to reveal the structure of the search problem and expose high-level swarm autonomy decisions while avoiding information overload?
-    \item What metrics and evaluation methods should be used to evaluate the effectiveness of the system?
+    \item Designing a simulation and C3I (Command, Control, Communications, and Intelligence) framework that captures key MSAR constraints and can evolve toward a full Digital Twin system.
+    \item Designing an interface that exposes the structure of the search problem and high-level swarm autonomy decisions without overloading the operator.
+    \item Defining an evaluation approach that combines operational performance metrics with workload-oriented assessment methods.
 \end{itemize}
+
+These priorities are rationalised as formal research questions and hypotheses in Section~\ref{subsec:objectives-and-hypotheses}.
 
 \subsection{Contributions}\label{subsec:contributions}
 
-This project seeks to contribute, through the design and implementation of BEACON, a five-layer Digital Twin framework for MSAR drone swarms.
+This project seeks to contribute, through the design and implementation of BEACON, a multi-layer Digital Twin framework for MSAR drone swarms.
 This would be implemented as a React/TypeScript simulation.
 
 That simulation needs to include a workload-aware supervisory interface, with a top-down mission map, a four-tier Engine Indication and Crew Alerting System (EICAS)-style alert hierarchy, and HCI-grounded design principles.
 In this context, an EICAS-style hierarchy means alerts are grouped by severity so critical events are surfaced first while lower-priority messages remain available without needing to dominate the user's attention.
-This is relevant to BEACON because MSAR supervision is time-critical, and severity-based alerting helps reduce the effort spent triaging issues while controlling drones.
+The alert hierarchy is relevant to BEACON because MSAR supervision is time-critical, and severity-based alerting helps reduce the effort spent triaging issues while controlling drones.
 This system exists in Aviation, where pilots are trained to respond to different levels of alerts depending on severity.
 
 This would be followed up with an evaluation framework, with explicit rationale for metrics selection and exclusions.
@@ -59,4 +61,6 @@ In this context, Situation Awareness refers to the definition given by Endsley's
 This concept was chosen because supervising an autonomous swarm in MSAR-like conditions requires continual prioritisation across competing alerts and vehicle states.
 Situation Awareness theory helps provide a clear human-performance basis for both interface design and evaluation.
 
-If integrated into a larger-scale research programme, BEACON could enable systematic, controlled testing of human-swarm MSAR interfaces before being deployed in costly real-world scenarios.
+BEACON's simulation-first, and modular architecture allows the same mission scenario to be replayed under consistent baseline conditions, while varying different factors at a time, such as drone, communication fidelity, or environmental difficulty.
+The architecture's extensibility also allows for comparisons between different interface designs, swarm controls, and more, while keeping the same underlying scenario and mechanics.
+These features allow BEACON to enable systematic, controlled testing of human-swarm MSAR interfaces before being deployed in costly real-world scenarios.
