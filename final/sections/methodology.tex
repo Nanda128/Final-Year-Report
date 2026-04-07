@@ -7,6 +7,15 @@ BEACON was developed iteratively, by defining a set of ``Issues'', each with spe
 Each issue constitutes a feature or improvement to be implemented in the project.
 For example, Alerts were implemented as a feature, with the acceptance criteria noting the need for finding a standard to prioritise and display alerts, and the need for a visual and audio component to the alert system.
 
+\subsection{Research Paradigm}\label{subsec:research-paradigm}
+
+This project is a qualitative study of supervisory interface design in the context of managing drone swarms in MSAR operations.
+
+Qualitative analysis was used to influence how interface and swarm-behaviour decisions are designed and justified.
+Choices about layout, alert hierarchy, swarm explainability, and interaction conventions were made by interpreting prior literature and applying it to BEACON's context.
+
+Accordingly, the methodology focuses on explaining why the interface is structured in a particular way to support operator performance.
+This ensures that theory-informed design reasoning is used to justify artefact decisions and evaluate their coherence with human-centred objectives (\cite{BABAEI2025103515}).
 
 \subsection{Objectives and Hypotheses}\label{subsec:objectives-and-hypotheses}
 
@@ -27,6 +36,40 @@ From these research questions, the following hypotheses can be derived:
 \end{itemize}
 
 These research questions and hypotheses will provide the basis for the design and analysis of BEACON\@.
+
+\subsection{HCI Approaches}\label{subsec:hci-approaches}
+
+Several HCI frameworks and principles informed BEACON's design decisions.
+Each principle was selected to address specific challenges arising from the supervisory-control context of drone-swarm management in an MSAR operation.
+
+\subsubsection{Endsley's Situational Awareness Model}
+
+Endsley's three-level model of Situational Awareness (SA) (\cite{situation_awareness}) was adopted as the primary theoretical lens for interface design.
+Supervising an autonomous swarm across an open maritime area naturally requires operators to maintain awareness of multiple concurrent processes such as drone states and environmental conditions under time pressure.
+Endsley's SA model provided a principled basis for deciding what information to surface and how that information should be evaluated.
+For example, communication health is positioned as a persistent indicator near each drone, since losing track of it would represent a failure at SA's first level (perception).
+
+\subsubsection{Proximity Compatibility Principle}
+
+The Proximity Compatibility Principle (PCP)~\cite{doi:10.1518/001872095779049408} holds that information used together in a task should be displayed in close spatial proximity to each other to reduce the costs incurred from context-switching.
+For example, in the context of BEACON, the central map is placed in proximity with the alert panel, so operators can cross-reference an event on the map with its associated alert without shifting focus across the screen.
+
+\subsubsection{Aviation Crew Alerting Conventions}
+
+Crew Alerting Systems structure alerts into tiers so that the most critical events are surfaced with priority without suppressing lower-priority context.
+BEACON adopts this convention directly (\cite{RN3}) by implementing a four-tier hierarchy using aviation-standard colours.
+This means alerts are grouped into red critical alerts, amber warnings, green advisories, and blue informational messages and are accompanied by category-specific audio cues.
+
+This approach was chosen because studies like~\cite{CUMMINGS2007339} indicate that operators adopt load-shedding strategies under stress, ignoring streams of uniform alerts until a critical event is missed.
+The hierarchy allows operators to triage issues quickly, while reducing the need for load-shedding.
+
+\subsubsection{Explainability as a Design Constraint}
+
+Research on supervisory control (\cite{AUTOMATIONEFFECTONUAVROUTING}) shows that overly opaque autonomy increases operator workload, because operators struggle to predict or analyse system behaviour.
+BEACON treats explainability as a first-class design constraint.
+
+For example, any swarm behaviour mechanism or path planning algorithm must be evaluated in terms of how easily its decisions can be explained to the operator.
+This transparency reduces the need for micromanagement and supports higher-level supervisory engagement over reactive debugging.
 
 \subsection{Development Approach, and Architecture}\label{subsec:development-approach-and-architecture}
 

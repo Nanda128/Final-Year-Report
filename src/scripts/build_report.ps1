@@ -77,7 +77,6 @@ try
 
     pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$auxilDir" "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass2.scripts.log')
     pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$auxilDir" "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass3.scripts.log')
-    pdflatex -interaction=nonstopmode -halt-on-error -output-directory="$auxilDir" "$MainTexFile" 2>&1 | Tee-Object -FilePath (Join-Path $logDir 'pdflatex-pass4.scripts.log')
 
     $tempPdfPath = Join-Path $auxilDir "${ReportName}_report.pdf"
     if (Test-Path $tempPdfPath)
